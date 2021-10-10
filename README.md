@@ -16,6 +16,10 @@
 |   |   |___style.module.css
 |   |___...
 |___HOCs
+|   |___layouts
+|   |   |___Auth
+|   |   |___Main
+|   |   |___...
 |___services
 |   |___axiosClient.js
 |   |___auth.js
@@ -29,7 +33,6 @@
 |   |___reducers
 |   |   |___auth.js
 |   |___index.js
-|___templates
 |___utils
 |___views
 ```
