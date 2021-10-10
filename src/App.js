@@ -1,20 +1,46 @@
 import React from "react";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Redirect } from "react-router-dom";
+import { AuthRoute, PrivateRoute } from "./HOCs/Route";
 
-// templates
-// import AuthTemplate from "./templates/AuthTemplate";
+// layouts
+// import AuthLayout from "./HOCs/layouts/Auth";
 
 // views
 import Login from "./views/Login";
 import Signup from "./views/Signup";
+
+import Projects from "./views/Projects";
+import NewProject from "./views/Projects/New";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Switch>
         <Redirect exact from="/" to="/login" />
-        <Route path="/login" exact component={Login} />
-        <Route path="/signup" exact component={Signup} />
+        <AuthRoute
+          path="/login"
+          exact
+          component={Login}
+          redirectPath="/projects"
+        />
+        <AuthRoute
+          path="/signup"
+          exact
+          component={Signup}
+          redirectPath="/projects"
+        />
+        <PrivateRoute
+          path="/projects"
+          exact
+          component={Projects}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/projects/new"
+          exact
+          component={NewProject}
+          redirectPath="/login"
+        />
       </Switch>
     </BrowserRouter>
   );
