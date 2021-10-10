@@ -1,3 +1,4 @@
-import AuthService from "./auth";
+
+import AuthService from "./authEntry";
 
 export const authService = new AuthService();

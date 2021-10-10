@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 import { AuthRoute, PrivateRoute } from "./HOCs/Route";
+import AuthLayout from './HOCs/AuthLayout'
 
-// layouts
-// import AuthLayout from "./HOCs/layouts/Auth";
 
 // views
 import Login from "./views/Login";
@@ -22,6 +21,7 @@ const App = () => {
           exact
           component={Login}
           redirectPath="/projects"
+          layout={AuthLayout}
         />
         <AuthRoute
           path="/signup"
