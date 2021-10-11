@@ -12,6 +12,7 @@ import Signup from "./views/Signup";
 
 import Projects from "./views/Projects";
 import NewProject from "./views/Projects/New";
+import ProjectDetail from "./views/Projects/Detail";
 
 const App = () => {
   return (
@@ -41,6 +42,13 @@ const App = () => {
           path="/projects/new"
           exact
           component={NewProject}
+          layout={MainLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/projects/:id"
+          exact
+          component={ProjectDetail}
           layout={MainLayout}
           redirectPath="/login"
         />
