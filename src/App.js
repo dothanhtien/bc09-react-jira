@@ -4,6 +4,7 @@ import { AuthRoute, PrivateRoute } from "./HOCs/Route";
 
 // layouts
 // import AuthLayout from "./HOCs/layouts/Auth";
+import MainLayout from "./HOCs/layouts/Main";
 
 // views
 import Login from "./views/Login";
@@ -33,12 +34,14 @@ const App = () => {
           path="/projects"
           exact
           component={Projects}
+          layout={MainLayout}
           redirectPath="/login"
         />
         <PrivateRoute
           path="/projects/new"
           exact
           component={NewProject}
+          layout={MainLayout}
           redirectPath="/login"
         />
       </Switch>
