@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../store/actions/auth";
 import swal from "sweetalert";
-import { schema } from "../../services/authEntry";
+import { schema } from "../../services/authServices";
 
 
 const Login = (props) => {
