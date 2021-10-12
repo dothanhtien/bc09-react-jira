@@ -13,3 +13,13 @@ export const fetchAllProjects = (params) => {
     }
   };
 };
+
+export const fetchAllProjectCategories = async (dispatch) => {
+  try {
+    const res = await projectService.fetchAllProjectCategories();
+
+    dispatch(createAction(actionType.SET_PROJECT_CATEGORIES, res.data.content));
+  } catch (err) {
+    console.log(err);
+  }
+};
