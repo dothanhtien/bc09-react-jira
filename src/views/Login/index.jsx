@@ -49,7 +49,7 @@ const Login = (props) => {
         style={{ height: window.innerHeight }}
       >
         <div
-          className="d-flex flex-column justify-content-center align-items-center"
+          className="flex flex-col justify-center items-center"
           style={{ height: window.innerHeight }}
         >
           <h3 className="text-center" style={{ fontWeight: 300, fontSize: 35 }}>
@@ -70,7 +70,7 @@ const Login = (props) => {
             />
           </div>
           {formik.touched.email && (
-            <p className="text-danger">{formik.errors.email}</p>
+            <p className="text-red-500">{formik.errors.email}</p>
           )}
 
           {/* password */}
@@ -86,7 +86,7 @@ const Login = (props) => {
               prefix={<LockOutlined />}
             />
           </div>
-          {<p className="text-danger">{formik.errors.password}</p>}
+          {<p className="text-red-500">{formik.errors.password}</p>}
 
           {/*  login btn */}
           <Button
@@ -103,7 +103,7 @@ const Login = (props) => {
           </Button>
 
           {/* fb btn*/}
-          <div className="social mt-3 d-flex">
+          <div className="social mt-3 flex">
             <Button
               style={{
                 backgroundColor: "rgb(59,89,152)",
@@ -114,7 +114,7 @@ const Login = (props) => {
               shape="circle"
             >
               <span
-                className="font-weight-bold d-flex justify-content-center"
+                className="font-bold flex justify-center"
                 style={{ color: "#fff", fontSize: 20 }}
               >
                 f
