@@ -1,8 +1,8 @@
 import axiosClient from "./axiosClient";
 
 class ProjectService {
-  fetchAllProjects() {
-    return axiosClient.get("api/Project/getAllProject");
+  fetchAllProjects(params) {
+    return axiosClient.get("api/Project/getAllProject", { params });
   }
 }
 

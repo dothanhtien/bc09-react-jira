@@ -1,20 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   Avatar,
   Button,
   Dropdown,
+  Input,
   Menu,
   Table,
   Tooltip,
   Typography,
 } from "antd";
-import { EllipsisOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchAllProjects } from "../../store/actions/project";
 
 const Projects = (props) => {
   const dispatch = useDispatch();
+  const debounceSearchRef = useRef(null);
   const projectList = useSelector((state) => state.project.projectList);
 
   const dataSource = projectList.map((project) => {
@@ -22,8 +24,27 @@ const Projects = (props) => {
   });
 
   useEffect(() => {
-    dispatch(fetchAllProjects);
+    dispatch(fetchAllProjects());
   }, [dispatch]);
+
+  const handleSearch = useCallback(
+    (e) => {
+      let params = {};
+
+      if (e.target.value.length > 0) {
+        params = { keyword: e.target.value };
+      }
+
+      if (debounceSearchRef.current) {
+        clearTimeout(debounceSearchRef.current);
+      }
+
+      debounceSearchRef.current = setTimeout(() => {
+        dispatch(fetchAllProjects(params));
+      }, 400);
+    },
+    [dispatch]
+  );
 
   return (
     <>
@@ -38,6 +59,16 @@ const Projects = (props) => {
           Create project
         </Link>
       </div>
+
+      <div>
+        <Input
+          allowClear
+          suffix={<SearchOutlined />}
+          className="mb-6 w-48 rounded"
+          onChange={handleSearch}
+        />
+      </div>
+
       <Table dataSource={dataSource}>
         <Table.Column
           title="Id"
@@ -97,10 +128,14 @@ const Projects = (props) => {
             const menu = (
               <Menu className="rounded">
                 <Menu.Item key="projectSettings">
-                  <button>Project settings</button>
+                  <Link to={`/projects/${record.id}/edit`}>
+                    Project settings
+                  </Link>
                 </Menu.Item>
                 <Menu.Item key="moveToTrash">
-                  <button>Move to trash</button>
+                  <button onClick={() => alert("This feature is coming soon!")}>
+                    Move to trash
+                  </button>
                 </Menu.Item>
               </Menu>
             );
