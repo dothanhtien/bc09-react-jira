@@ -35,7 +35,7 @@ const App = () => {
           layout={AuthLayout}
         />
         <AuthRoute
-          path="/signup"
+          path="/register"
           exact
           component={Signup}
           redirectPath="/projects"
