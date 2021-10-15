@@ -23,3 +23,17 @@ export const fetchAllProjectCategories = async (dispatch) => {
     console.log(err);
   }
 };
+
+export const createProjectAuthorize = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      const res = await projectService.createProjectAuthorize(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
