@@ -1,44 +1,52 @@
 import swal from "sweetalert";
 import { createAction } from ".";
-import { authService, fetchMeService } from "../../services";
+import { authService } from "../../services";
 import { ACCESS_TOKEN } from "../../utils/constants/config";
 import { actionType } from "./type";
 
-//Log in function
-export const logIn = (values, callBack) => {
+export const logIn = (values, callback) => {
   return async (dispatch) => {
     try {
-      // axios configured @authServices
       const res = await authService.logIn(values);
-      console.log(res.data);
       swal("To team Jira 6!", "API successfully called!", "success");
 
       dispatch(createAction(actionType.SET_LOGIN, res.data));
 
-      //ACCESSTOKEN declared @utils
       localStorage.setItem(ACCESS_TOKEN, res.data.content.accessToken);
       localStorage.setItem("loginInfo", JSON.stringify(res.data.content));
 
-      callBack();
+      if (callback) {
+        callback();
+      }
     } catch (err) {
-      console.log({ ...err });
-      console.log(err.response.data.message);
+      console.log(err);
       swal("Awww!", err.response.data.message, "error");
     }
   };
 };
 
-//login maintaince: not working!
+export const signUp = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      await authService.signUp(data);
+
+      swal("Successfully register!", "Please log in to continue!", "success");
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
 export const fetchMe = async (dispatch) => {
   try {
-    const res = await fetchMeService.fetchMe();
-    console.log(res.data);
-    alert("fetchme works");
+    const res = await authService.fetchMe();
 
     dispatch(createAction(actionType.SET_LOGIN, res.data));
-
   } catch (err) {
-    console.log("err", { ...err });
-    alert("duy trì đăng nhập ko thành, xem lại authservices, link api, useEffect @app.js");
+    console.log(err);
   }
 };

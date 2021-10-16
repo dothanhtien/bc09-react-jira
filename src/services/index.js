@@ -1,6 +1,3 @@
-
-import AuthService, { FetchMeService, RegisterService } from "./authServices";
+import AuthService from "./auth";
 
 export const authService = new AuthService();
-export const fetchMeService = new FetchMeService();
-export const registerService = new RegisterService();

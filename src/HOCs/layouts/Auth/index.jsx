@@ -1,6 +1,4 @@
-import React from "react";
-import { Route } from "react-router";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
 
 const { Sider, Content } = Layout;
@@ -19,7 +17,6 @@ const AuthLayout = (props) => {
 
   return (
     <Layout>
-      {/* left side: image */}
       <Sider
         width={width / 2}
         style={{
@@ -31,10 +28,10 @@ const AuthLayout = (props) => {
           repeat: "noRepeat",
         }}
       />
-
-      {/* right side: form */}
+      
       <Content>{props.children}</Content>
     </Layout>
   );
 };
+
 export default AuthLayout;

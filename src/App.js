@@ -1,8 +1,12 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Switch, Redirect } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ACCESS_TOKEN } from "./utils/constants/config";
+import { fetchMe } from "./store/actions/auth";
 import { AuthRoute, PrivateRoute } from "./HOCs/Route";
-import AuthLayout from './HOCs/AuthLayout'
 
+// layouts
+import AuthLayout from "./HOCs/layouts/Auth";
 
 // views
 import Login from "./views/Login";
@@ -10,18 +14,14 @@ import Signup from "./views/Signup";
 
 import Projects from "./views/Projects";
 import NewProject from "./views/Projects/New";
-import { useDispatch} from "react-redux";
-import { ACCESS_TOKEN } from "./utils/constants/config";
-import { fetchMe } from "./store/actions/auth";
 
 const App = () => {
   const dispatch = useDispatch();
-  //duy trì đăng nhập
+
   useEffect(() => {
-    const token = localStorage.getItem(ACCESS_TOKEN)
-    console.log("duy trì đăng nhập token", token);
-    if (token) dispatch(fetchMe)
-  }, [])
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) dispatch(fetchMe);
+  }, [dispatch]);
 
   return (
     <BrowserRouter>

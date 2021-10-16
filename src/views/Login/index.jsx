@@ -4,8 +4,9 @@ import { LockOutlined, TwitterOutlined, MailOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import { logIn } from "../../store/actions/auth";
-import { schema } from "../../services/authServices";
+import { schema } from "../../services/auth";
 import { NavLink } from "react-router-dom";
+import swal from "sweetalert";
 
 const Login = (props) => {
   const dispatch = useDispatch();
@@ -20,20 +21,18 @@ const Login = (props) => {
   });
   console.log(formik.values);
 
-  //hàm submit login
   const handleSubmit = (e) => {
     e.preventDefault();
-    //9.4
+
     formik.setTouched({
       email: true,
       password: true,
     });
 
-    //prevents from logging in after successful registration
-    // if (!formik.isValid) {
-    //   swal("Please check again!");
-    //   return;
-    // }
+      if (!formik.isValid) {
+      swal("Please check again!");
+      return;
+    }
 
     dispatch(
       logIn(formik.values, () => {
@@ -41,8 +40,8 @@ const Login = (props) => {
       })
     );
   };
+
   return (
-    // <AuthLayout>
     <form
       onSubmit={handleSubmit}
       className="container"
@@ -65,7 +64,7 @@ const Login = (props) => {
             onBlur={formik.handleBlur}
             size="large"
             placeholder="email"
-            style={{ minWidth: 300, borderRadius:5  }}
+            style={{ minWidth: 300, borderRadius: 5 }}
             prefix={<MailOutlined />}
           />
         </div>
@@ -82,9 +81,8 @@ const Login = (props) => {
             type="password"
             size="large"
             placeholder="password"
-            style={{ minWidth: 300, borderRadius:5 }}
+            style={{ minWidth: 300, borderRadius: 5 }}
             prefix={<LockOutlined />}
-            
           />
         </div>
         {<p className="text-red-500">{formik.errors.password}</p>}
@@ -97,7 +95,7 @@ const Login = (props) => {
             minWidth: 300,
             backgroundColor: "rgb(102,117,223)",
             color: "#fff",
-            borderRadius:5 
+            borderRadius: 5,
           }}
           className="mt-5"
         >
@@ -106,7 +104,10 @@ const Login = (props) => {
 
         <p>
           Don't have an account yet?
-          <NavLink to="/register" className="text-blue-500"> Register now</NavLink>
+          <NavLink to="/register" className="text-blue-500">
+            {" "}
+            Register now
+          </NavLink>
         </p>
 
         {/* fb btn*/}
@@ -138,7 +139,6 @@ const Login = (props) => {
         </div>
       </div>
     </form>
-    // </AuthLayout>
   );
 };
 

@@ -1,12 +1,19 @@
-import { useFormik } from "formik";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { Button, Input } from "antd";
-import { schema } from "../../services/authServices";
 import swal from "sweetalert";
-import { UserOutlined, LockOutlined, TwitterOutlined, PhoneOutlined, MailOutlined } from "@ant-design/icons";
+import { Button, Input } from "antd";
 import { NavLink } from "react-router-dom";
-import { registerService } from "../../services";
+import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
+import {
+  UserOutlined,
+  LockOutlined,
+  TwitterOutlined,
+  PhoneOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
+import { signUp } from "../../store/actions/auth";
+import { schemaSignup } from "../../services/auth";
+// import { schema } from "../../services/auth";
 
 const Signup = (props) => {
   const dispatch = useDispatch();
@@ -18,7 +25,7 @@ const Signup = (props) => {
       name: "",
       phoneNumber: "",
     },
-    validationSchema: schema,
+    validationSchema: schemaSignup,
     validationOnMount: true,
   });
 
@@ -29,21 +36,17 @@ const Signup = (props) => {
       email: true,
       password: true,
     });
-    
+
     if (!formik.isValid) {
-      swal("Please check again!");
+      swal("Please check your information again!");
       return;
     }
 
-    try {
-      const res = await registerService.signUp(formik.values)
-      console.log(res.data);
-
-      swal("Successfully register!", "Please log in to continue!", "success");
-      props.history.push("/login")
-    } catch (err) {
-      console.log({ ...err });
-    }
+    dispatch(
+      signUp(formik.values, () => {
+        props.history.push("/login");
+      })
+    );
   };
 
   return (
@@ -176,7 +179,6 @@ const Signup = (props) => {
         </div>
       </div>
     </form>
-    // </AuthLayout>
   );
 };
 
