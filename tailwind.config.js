@@ -181,7 +181,10 @@ module.exports = {
       150: "1.5",
       200: "2",
     },
-    container: {},
+    container: {
+      center: true,
+      padding: "2.5rem",
+    },
     content: {
       none: "none",
     },
@@ -817,6 +820,7 @@ module.exports = {
       30: "30",
       40: "40",
       50: "50",
+      header: "1030",
     },
   },
   variantOrder: [
