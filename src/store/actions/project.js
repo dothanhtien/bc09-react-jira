@@ -26,14 +26,18 @@ export const fetchAllProjectCategories = async (dispatch) => {
 
 export const createProjectAuthorize = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_PROJECT_ERROR, null));
     try {
-      const res = await projectService.createProjectAuthorize(data);
+      await projectService.createProjectAuthorize(data);
 
       if (callback) {
         callback();
       }
     } catch (err) {
       console.log(err);
+      dispatch(
+        createAction(actionType.SET_PROJECT_ERROR, err.response.data.content)
+      );
     }
   };
 };

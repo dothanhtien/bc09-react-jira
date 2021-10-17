@@ -3,6 +3,7 @@ import { actionType } from "../actions/type";
 const initialState = {
   projectList: [],
   projectCategories: [],
+  error: null,
 };
 
 const reducer = (state = initialState, { type, payload }) => {
@@ -13,6 +14,10 @@ const reducer = (state = initialState, { type, payload }) => {
     }
     case actionType.SET_PROJECT_CATEGORIES: {
       state.projectCategories = payload;
+      return { ...state };
+    }
+    case actionType.SET_PROJECT_ERROR: {
+      state.error = payload;
       return { ...state };
     }
     default:

@@ -23,6 +23,7 @@ const NewProject = (props) => {
   const projectCategories = useSelector(
     (state) => state.project.projectCategories
   );
+  const serverError = useSelector((state) => state.project.error);
 
   const formik = useFormik({
     initialValues: {
@@ -44,6 +45,16 @@ const NewProject = (props) => {
   useEffect(() => {
     dispatch(fetchAllProjectCategories);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (serverError === "Project name already exists") {
+      formik.setErrors({
+        projectName: serverError,
+        ...formik.errors,
+      });
+    }
+    // eslint-disable-next-line
+  }, [serverError]);
 
   const handleEditorChange = useCallback(
     (newValue, editor) => {
