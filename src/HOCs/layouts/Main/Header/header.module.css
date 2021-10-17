@@ -17,3 +17,8 @@
   height: 3px;
   @apply bg-blue-700;
 }
+
+.menu-item {
+  margin-left: -8px;
+  margin-right: -8px;
+}
