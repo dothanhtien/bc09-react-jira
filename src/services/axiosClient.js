@@ -11,14 +11,19 @@ const axiosClient = axios.create({
   headers: {
     "content-type": "application/json",
     TokenCybersoft: TOKEN_CYBERSOFT,
-    Authorization: "Bearer " + localStorage.getItem(ACCESS_TOKEN),
   },
 });
 
 // Add a request interceptor
-axios.interceptors.request.use(
+axiosClient.interceptors.request.use(
   (config) => {
     // Do something before request is sent
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
+    
+    if (accessToken) {
+      config.headers.Authorization = "Bearer " + accessToken;
+    }
+
     return config;
   },
   (error) => {
@@ -28,7 +33,7 @@ axios.interceptors.request.use(
 );
 
 // Add a response interceptor
-axios.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => {
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
