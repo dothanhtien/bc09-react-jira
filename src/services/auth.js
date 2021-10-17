@@ -1,5 +1,4 @@
 import axiosClient from "./axiosClient";
-import { ACCESS_TOKEN } from "../utils/constants/config";
 import * as yup from "yup";
 import { schemaContent } from "./schemaContent";
 
@@ -20,15 +19,7 @@ class AuthService {
   }
 
   fetchMe() {
-    return axiosClient.post(
-      "/api/Users/getUser",
-      {},
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem(ACCESS_TOKEN),
-        },
-      }
-    );
+    return axiosClient.get("/api/Users/getUser");
   }
 }
 
