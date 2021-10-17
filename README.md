@@ -3,7 +3,7 @@
 - UI: antd, tailwindcss
 - Routing: react-router-dom
 - Store: redux, react-redux, redux-thunk
-- Form: formik, yup (Planning)
+- Form: formik, yup
 ## Folder Structure
 ```
 ./src
