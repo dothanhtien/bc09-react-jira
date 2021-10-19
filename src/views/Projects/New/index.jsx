@@ -1,13 +1,5 @@
-import React, { useCallback, useEffect } from "react";
-import {
-  Breadcrumb,
-  Button,
-  Form,
-  Input,
-  notification,
-  Select,
-  Typography,
-} from "antd";
+import React, { useEffect, useState } from "react";
+import { Breadcrumb, Button, Form, Input, Select, Typography } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +9,9 @@ import {
   fetchAllProjectCategories,
 } from "../../../store/actions/project";
 import { createProjectSchema } from "../../../services/project";
+import AddMembersModal from "../../../components/Projects/AddMembersModal";
+import { createAction } from "../../../store/actions";
+import { actionType } from "../../../store/actions/type";
 
 const NewProject = (props) => {
   const dispatch = useDispatch();
@@ -24,6 +19,8 @@ const NewProject = (props) => {
     (state) => state.project.projectCategories
   );
   const serverError = useSelector((state) => state.project.error);
+  const projectDetail = useSelector((state) => state.project.projectDetail);
+  const [showAddMembersModal, setShowAddMembersModal] = useState(true);
 
   const formik = useFormik({
     initialValues: {
@@ -56,38 +53,29 @@ const NewProject = (props) => {
     // eslint-disable-next-line
   }, [serverError]);
 
-  const handleEditorChange = useCallback(
-    (newValue, editor) => {
-      formik.setFieldValue("description", newValue);
-    },
-    [formik]
-  );
+  const handleEditorChange = (newValue, editor) => {
+    formik.setFieldValue("description", newValue);
+  };
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = () => {
     formik.setTouched({
       projectName: true,
       categoryId: true,
     });
-
-    if (!(formik.errors && Object.keys(formik.errors).length === 0))
-      console.log(formik.errors);
 
     if (!formik.isValid) return;
 
     dispatch(
       createProjectAuthorize(formik.values, () => {
         formik.resetForm();
-        openNotificationWithIcon();
+        setShowAddMembersModal(true);
       })
     );
-  }, [formik, dispatch]);
+  };
 
-  const openNotificationWithIcon = () => {
-    notification["success"]({
-      message: "Success",
-      description: "Project created successfully!",
-      top: 80,
-    });
+  const handleCancel = () => {
+    dispatch(createAction(actionType.SET_PROJECT_DETAIL, null));
+    setShowAddMembersModal(false);
   };
 
   return (
@@ -197,6 +185,14 @@ const NewProject = (props) => {
           </Button>
         </div>
       </Form>
+
+      {projectDetail && (
+        <AddMembersModal
+          visible={showAddMembersModal}
+          onCancel={handleCancel}
+          project={projectDetail}
+        />
+      )}
     </div>
   );
 };

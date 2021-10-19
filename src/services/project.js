@@ -22,6 +22,20 @@ class ProjectService {
   createProjectAuthorize(data) {
     return axiosClient.post("/api/Project/createProjectAuthorize", data);
   }
+
+  fetchUsersByProject(projectId) {
+    return axiosClient.get("/api/Users/getUserByProjectId", {
+      params: { idProject: projectId },
+    });
+  }
+
+  assignUserToProject(data) {
+    return axiosClient.post("/api/Project/assignUserProject", data);
+  }
+
+  removeUserFromProject(data) {
+    return axiosClient.post("/api/Project/removeUserFromProject", data);
+  }
 }
 
 export default ProjectService;
