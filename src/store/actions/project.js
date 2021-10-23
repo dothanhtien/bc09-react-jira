@@ -13,3 +13,16 @@ export const fetchAllProjects = (params) => {
     }
   };
 };
+
+export const fetchProjectDetail = (projectId) => {
+  return async (dispatch) => {
+    try {
+      const res = await projectService.fetchProjectDetail(projectId);
+
+      console.log(res);
+      dispatch(createAction(actionType.SET_PROJECT_DETAIL, res.data.content));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};

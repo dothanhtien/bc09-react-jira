@@ -4,6 +4,7 @@ export const actionType = {
 
   // projects
   SET_PROJECT_LIST: "SET_PROJECT_LIST",
+  SET_PROJECT_DETAIL: "SET_PROJECT_DETAIL",
 
   // tasks
   

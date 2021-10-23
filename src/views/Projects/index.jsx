@@ -82,7 +82,7 @@ const Projects = (props) => {
           key="projectName"
           render={(projectName, record) => (
             <Link
-              to={`/projects/${record.id}`}
+              to={`/projects/${record.id}/board`}
               className="text-blue-700 hover:text-blue-700 focus:text-blue-700"
             >
               {projectName}
