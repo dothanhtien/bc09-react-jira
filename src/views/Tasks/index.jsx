@@ -6,6 +6,8 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import TaskItemPriorityBadge from "../../components/Tasks/TaskItemPriorityBadge";
+import { createAction } from "../../store/actions";
+import { actionType } from "../../store/actions/type";
 import { fetchProjectDetail } from "../../store/actions/project";
 import { updateTaskStatus } from "../../store/actions/task";
 
@@ -17,6 +19,10 @@ const Tasks = (props) => {
 
   useEffect(() => {
     dispatch(fetchProjectDetail(projectId));
+
+    return () => {
+      dispatch(createAction(actionType.SET_PROJECT_DETAIL, null));
+    };
   }, [dispatch, projectId]);
 
   useEffect(() => {
