@@ -1,20 +1,72 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Breadcrumb, Col, Row, Typography } from "antd";
 import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjectDetail } from "../../store/actions/project";
 import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import TaskItemPriorityBadge from "../../components/Tasks/TaskItemPriorityBadge";
+import { fetchProjectDetail } from "../../store/actions/project";
+import { updateTaskStatus } from "../../store/actions/task";
 
 const Tasks = (props) => {
   const dispatch = useDispatch();
   const projectDetail = useSelector((state) => state.project.projectDetail);
+  const [clonedProjectDetail, setClonedProjectDetail] = useState(null);
   const { projectId } = props.match.params;
 
   useEffect(() => {
     dispatch(fetchProjectDetail(projectId));
   }, [dispatch, projectId]);
+
+  useEffect(() => {
+    setClonedProjectDetail({ ...projectDetail });
+  }, [projectDetail]);
+
+  const handleDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+    const clonedProject = { ...projectDetail };
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
+    const draggedItem = {
+      ...clonedProject.lstTask[source.droppableId - 1].lstTaskDeTail[
+        source.index
+      ],
+    };
+
+    clonedProject.lstTask[source.droppableId - 1].lstTaskDeTail.splice(
+      source.index,
+      1
+    );
+
+    clonedProject.lstTask[destination.droppableId - 1].lstTaskDeTail.splice(
+      destination.index,
+      0,
+      draggedItem
+    );
+
+    setClonedProjectDetail(clonedProject);
+
+    dispatch(
+      updateTaskStatus(
+        {
+          taskId: draggableId,
+          statusId: destination.droppableId,
+        },
+        () => dispatch(fetchProjectDetail(projectId))
+      )
+    );
+  };
 
   return (
     <>
@@ -22,60 +74,97 @@ const Tasks = (props) => {
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>
-        <Breadcrumb.Item>{projectDetail?.projectName}</Breadcrumb.Item>
+        <Breadcrumb.Item>{clonedProjectDetail?.projectName}</Breadcrumb.Item>
       </Breadcrumb>
 
       <Typography.Title level={3}>Board</Typography.Title>
 
       <Row gutter={16}>
-        {projectDetail?.lstTask.map((listTaskItem) => {
-          return (
-            <Col span={6} key={listTaskItem.statusId}>
-              <div className="bg-gray-100 w-full h-full p-2 rounded">
-                <TaskListTitle title={listTaskItem.statusName} />
+        <DragDropContext onDragEnd={handleDragEnd}>
+          {clonedProjectDetail?.lstTask?.map((listTaskItem) => {
+            return (
+              <Droppable
+                droppableId={listTaskItem.statusId}
+                key={listTaskItem.statusId}
+              >
+                {(provided) => {
+                  return (
+                    <Col
+                      span={6}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                    >
+                      <div className="bg-gray-100 w-full h-full p-2 rounded">
+                        <TaskListTitle title={listTaskItem.statusName} />
 
-                {listTaskItem.lstTaskDeTail &&
-                  listTaskItem.lstTaskDeTail.map((listTaskDetailItem) => {
-                    return (
-                      <div
-                        key={listTaskDetailItem.taskId}
-                        className="w-full bg-white rounded p-2 mb-1 shadow"
-                      >
-                        <Row>
-                          <Col span={18}>
-                            {listTaskDetailItem.taskName && (
-                              <div className="mb-1">
-                                {listTaskDetailItem.taskName}
-                              </div>
-                            )}
-                            {!listTaskDetailItem.taskName && (
-                              <div className="mb-1 text-gray-400">Unnamed</div>
-                            )}
+                        {listTaskItem.lstTaskDeTail.map(
+                          (listTaskDetailItem, index) => {
+                            return (
+                              <Draggable
+                                draggableId={listTaskDetailItem.taskId.toString()}
+                                key={listTaskDetailItem.taskId}
+                                index={index}
+                              >
+                                {(provided) => {
+                                  return (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      className="w-full bg-white rounded py-3 px-2 mb-1 shadow"
+                                    >
+                                      <Row>
+                                        <Col span={18}>
+                                          {listTaskDetailItem.taskName && (
+                                            <div className="mb-1">
+                                              {listTaskDetailItem.taskName}
+                                            </div>
+                                          )}
+                                          {!listTaskDetailItem.taskName && (
+                                            <div className="mb-1 text-gray-400">
+                                              Unnamed
+                                            </div>
+                                          )}
 
-                            <TaskItemPriorityBadge
-                              priorityTask={listTaskDetailItem.priorityTask}
-                            />
-                          </Col>
-                          <Col span={6}>
-                            <div className="h-full w-full flex justify-end items-end">
-                              <Avatar size="small" icon={<UserOutlined />} />
-                            </div>
-                          </Col>
-                        </Row>
+                                          <TaskItemPriorityBadge
+                                            priorityTask={
+                                              listTaskDetailItem.priorityTask
+                                            }
+                                          />
+                                        </Col>
+                                        <Col span={6}>
+                                          <div className="h-full w-full flex justify-end items-end">
+                                            <Avatar
+                                              size="small"
+                                              icon={<UserOutlined />}
+                                            />
+                                          </div>
+                                        </Col>
+                                      </Row>
+                                    </div>
+                                  );
+                                }}
+                              </Draggable>
+                            );
+                          }
+                        )}
+
+                        {provided.placeholder}
+
+                        {listTaskItem.statusName === "BACKLOG" && (
+                          <button className="h-8 hover:bg-gray-300 focus:bg-gray-300 w-full text-left font-medium py-1 px-3 rounded duration-300">
+                            <PlusOutlined className="mr-1" />
+                            <span>Create</span>
+                          </button>
+                        )}
                       </div>
-                    );
-                  })}
-
-                {listTaskItem.statusName === "BACKLOG" && (
-                  <button className="h-8 hover:bg-gray-300 focus:bg-gray-300 w-full text-left font-medium py-1 px-3 rounded duration-300">
-                    <PlusOutlined className="mr-1" />
-                    <span>Create</span>
-                  </button>
-                )}
-              </div>
-            </Col>
-          );
-        })}
+                    </Col>
+                  );
+                }}
+              </Droppable>
+            );
+          })}
+        </DragDropContext>
       </Row>
     </>
   );

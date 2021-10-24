@@ -4,6 +4,7 @@
 - Routing: react-router-dom
 - Store: redux, react-redux, redux-thunk
 - Form: formik, yup (Planning)
+- Others: react-beautiful-dnd
 ## Folder Structure
 ```
 ./src
