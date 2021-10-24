@@ -24,7 +24,11 @@ const TaskListTitle = ({ title }) => {
     return classes;
   };
 
-  return <span className={renderClassesAccordingToTitle()}>{title}</span>;
+  return (
+    <div>
+      <span className={renderClassesAccordingToTitle()}>{title}</span>
+    </div>
+  );
 };
 
 export default TaskListTitle;

@@ -89,85 +89,84 @@ const Tasks = (props) => {
         <DragDropContext onDragEnd={handleDragEnd}>
           {clonedProjectDetail?.lstTask?.map((listTaskItem) => {
             return (
-              <Droppable
-                droppableId={listTaskItem.statusId}
-                key={listTaskItem.statusId}
-              >
-                {(provided) => {
-                  return (
-                    <Col
-                      span={6}
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      <div className="bg-gray-100 w-full h-full p-2 rounded">
-                        <TaskListTitle title={listTaskItem.statusName} />
+              <Col span={6} key={listTaskItem.statusId}>
+                <div className="bg-gray-100 w-full h-full p-2 rounded flex flex-col">
+                  <TaskListTitle title={listTaskItem.statusName} />
 
-                        {listTaskItem.lstTaskDeTail.map(
-                          (listTaskDetailItem, index) => {
-                            return (
-                              <Draggable
-                                draggableId={listTaskDetailItem.taskId.toString()}
-                                key={listTaskDetailItem.taskId}
-                                index={index}
-                              >
-                                {(provided) => {
-                                  return (
-                                    <div
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      className="w-full bg-white rounded py-3 px-2 mb-1 shadow"
-                                    >
-                                      <Row>
-                                        <Col span={18}>
-                                          {listTaskDetailItem.taskName && (
-                                            <div className="mb-1">
-                                              {listTaskDetailItem.taskName}
-                                            </div>
-                                          )}
-                                          {!listTaskDetailItem.taskName && (
-                                            <div className="mb-1 text-gray-400">
-                                              Unnamed
-                                            </div>
-                                          )}
+                  <Droppable droppableId={listTaskItem.statusId}>
+                    {(provided) => {
+                      return (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="flex-grow"
+                        >
+                          {listTaskItem.lstTaskDeTail.map(
+                            (listTaskDetailItem, index) => {
+                              return (
+                                <Draggable
+                                  draggableId={listTaskDetailItem.taskId.toString()}
+                                  key={listTaskDetailItem.taskId}
+                                  index={index}
+                                >
+                                  {(provided) => {
+                                    return (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className="w-full bg-white rounded py-3 px-2 mb-1 shadow"
+                                      >
+                                        <Row>
+                                          <Col span={18}>
+                                            {listTaskDetailItem.taskName && (
+                                              <div className="mb-1">
+                                                {listTaskDetailItem.taskName}
+                                              </div>
+                                            )}
+                                            {!listTaskDetailItem.taskName && (
+                                              <div className="mb-1 text-gray-400">
+                                                Unnamed
+                                              </div>
+                                            )}
 
-                                          <TaskItemPriorityBadge
-                                            priorityTask={
-                                              listTaskDetailItem.priorityTask
-                                            }
-                                          />
-                                        </Col>
-                                        <Col span={6}>
-                                          <div className="h-full w-full flex justify-end items-end">
-                                            <Avatar
-                                              size="small"
-                                              icon={<UserOutlined />}
+                                            <TaskItemPriorityBadge
+                                              priorityTask={
+                                                listTaskDetailItem.priorityTask
+                                              }
                                             />
-                                          </div>
-                                        </Col>
-                                      </Row>
-                                    </div>
-                                  );
-                                }}
-                              </Draggable>
-                            );
-                          }
-                        )}
+                                          </Col>
+                                          <Col span={6}>
+                                            <div className="h-full w-full flex justify-end items-end">
+                                              <Avatar
+                                                size="small"
+                                                icon={<UserOutlined />}
+                                              />
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </div>
+                                    );
+                                  }}
+                                </Draggable>
+                              );
+                            }
+                          )}
 
-                        {provided.placeholder}
+                          {provided.placeholder}
 
-                        {listTaskItem.statusName === "BACKLOG" && (
-                          <button className="h-8 hover:bg-gray-300 focus:bg-gray-300 w-full text-left font-medium py-1 px-3 rounded duration-300">
-                            <PlusOutlined className="mr-1" />
-                            <span>Create</span>
-                          </button>
-                        )}
-                      </div>
-                    </Col>
-                  );
-                }}
-              </Droppable>
+                          {listTaskItem.statusName === "BACKLOG" && (
+                            <button className="h-8 hover:bg-gray-300 focus:bg-gray-300 w-full text-left font-medium py-1 px-3 rounded duration-300">
+                              <PlusOutlined className="mr-1" />
+                              <span>Create</span>
+                            </button>
+                          )}
+                        </div>
+                      );
+                    }}
+                  </Droppable>
+                </div>
+              </Col>
             );
           })}
         </DragDropContext>
