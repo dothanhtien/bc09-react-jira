@@ -83,6 +83,21 @@ export const removeUserFromProject = (data, callback) => {
       if (callback) {
         callback();
       }
+    } catch(err)
+    {
+      console.log(err);
+    }
+  }
+}
+
+export const deleteProject = (projectId, callback) => {
+  return async (dispatch) => {
+    try {
+      await projectService.deleteProject(projectId);
+
+      if (callback) {
+        callback();
+      }
     } catch (err) {
       console.log(err);
     }

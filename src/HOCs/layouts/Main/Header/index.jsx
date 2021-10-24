@@ -28,44 +28,88 @@ const Header = () => {
 
   const settingsMenu = (
     <Menu className={classes.menu}>
-      <span className="block mt-3 mb-2 px-5 font-bold text-xs text-gray-400 uppercase">
-        Atlassian Admin
-      </span>
-      <Menu.Item key="personalSettings" className="h-10 py-2 px-5">
-        <Link to="/projects">User management</Link>
-      </Menu.Item>
-      <span className="block mt-3 mb-2 px-5 font-bold text-xs text-gray-400 uppercase">
-        Jira Settings
-      </span>
-      <Menu.Item key="profile" className="h-10 py-2 px-5">
-        <Link to="/projects">Projects</Link>
-      </Menu.Item>
-      <Menu.Item key="accountSettings" className="h-10 py-2 px-5">
-        <Link to="/projects">Issues</Link>
-      </Menu.Item>
+      <Menu.ItemGroup
+        title={
+          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
+            Atlassian Admin
+          </span>
+        }
+      >
+        <Menu.Item
+          key="personalSettings"
+          className={`${classes["menu-item"]} h-10 py-2 px-5`}
+        >
+          <Link to="/projects">User management</Link>
+        </Menu.Item>
+      </Menu.ItemGroup>
+
+      <Menu.ItemGroup
+        title={
+          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
+            Jira Settings
+          </span>
+        }
+      >
+        <Menu.Item
+          key="profile"
+          className={`${classes["menu-item"]} h-10 py-2 px-5`}
+        >
+          <Link to="/projects">Projects</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="accountSettings"
+          className={`${classes["menu-item"]} h-10 py-2 px-5`}
+        >
+          <Link to="/projects">Issues</Link>
+        </Menu.Item>
+      </Menu.ItemGroup>
     </Menu>
   );
 
   const profileMenu = (
     <Menu className={classes.menu}>
-      <span className="block mt-3 mb-2 px-5 font-bold text-xs text-gray-400 uppercase">
-        Jira
-      </span>
-      <Menu.Item key="personalSettings" className="h-10 py-2 px-5">
-        <Link to="/projects">Personal settings</Link>
+      <Menu.ItemGroup
+        title={
+          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
+            Jira
+          </span>
+        }
+      >
+        <Menu.Item
+          key="personalSettings"
+          className={`${classes["menu-item"]} h-10 py-2 px-5`}
+        >
+          <Link to="/projects">Personal settings</Link>
+        </Menu.Item>
+      </Menu.ItemGroup>
+      <Menu.ItemGroup
+        title={
+          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
+            Đỗ Thành Tiến
+          </span>
+        }
+        className="Test"
+      >
+        <Menu.Item
+          key="profile"
+          className={`${classes["menu-item"]} h-10 py-2 px-5`}
+        >
+          <Link to="/projects">Profiles</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="accountSettings"
+          className={`${classes["menu-item"]} h-10 py-2 px-5`}
+        >
+          <Link to="/projects">Account settings</Link>
+        </Menu.Item>
+      </Menu.ItemGroup>
+
+      <Menu.Item key="divider" className="px-0">
+        <Divider className="m-0" />
       </Menu.Item>
-      <span className="block mt-3 mb-2 px-5 font-bold text-xs text-gray-400 uppercase">
-        Đỗ Thành Tiến
-      </span>
-      <Menu.Item key="profile" className="h-10 py-2 px-5">
-        <Link to="/projects">Profiles</Link>
-      </Menu.Item>
-      <Menu.Item key="accountSettings" className="h-10 py-2 px-5">
-        <Link to="/projects">Account settings</Link>
-      </Menu.Item>
-      <Divider className="m-0" />
-      <Menu.Item key="logout" className="h-10 py-2 px-5">
-        <button onClick={logout}>Log out</button>
+
+      <Menu.Item key="logout" className="h-10 py-2 px-5" onClick={logout}>
+        Log out
       </Menu.Item>
     </Menu>
   );

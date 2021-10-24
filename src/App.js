@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Switch, Redirect } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { ACCESS_TOKEN } from "./utils/constants/config";
+import { fetchMe } from "./store/actions/auth";
 import { AuthRoute, PrivateRoute } from "./HOCs/Route";
 
 // layouts
-// import AuthLayout from "./HOCs/layouts/Auth";
+import AuthLayout from "./HOCs/layouts/Auth";
 import MainLayout from "./HOCs/layouts/Main";
 
 // views
@@ -16,6 +19,13 @@ import ProjectDetail from "./views/Projects/Detail";
 import EditProject from "./views/Projects/Edit";
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) dispatch(fetchMe);
+  }, [dispatch]);
+
   return (
     <BrowserRouter>
       <Switch>
@@ -25,9 +35,10 @@ const App = () => {
           exact
           component={Login}
           redirectPath="/projects"
+          layout={AuthLayout}
         />
         <AuthRoute
-          path="/signup"
+          path="/register"
           exact
           component={Signup}
           redirectPath="/projects"
