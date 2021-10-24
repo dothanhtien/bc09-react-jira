@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Breadcrumb, Col, Row, Typography } from "antd";
-import { UserOutlined, PlusOutlined } from "@ant-design/icons";
+import { Breadcrumb, Col, Row, Typography } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import TaskListTitle from "../../components/Tasks/TaskListTitle";
-import TaskItemPriorityBadge from "../../components/Tasks/TaskItemPriorityBadge";
 import { createAction } from "../../store/actions";
 import { actionType } from "../../store/actions/type";
 import { fetchProjectDetail } from "../../store/actions/project";
 import { updateTaskStatus } from "../../store/actions/task";
+import TaskItem from "../../components/Tasks/TaskItem";
 
 const Tasks = (props) => {
   const dispatch = useDispatch();
@@ -104,51 +104,11 @@ const Tasks = (props) => {
                           {listTaskItem.lstTaskDeTail.map(
                             (listTaskDetailItem, index) => {
                               return (
-                                <Draggable
-                                  draggableId={listTaskDetailItem.taskId.toString()}
+                                <TaskItem
                                   key={listTaskDetailItem.taskId}
+                                  listTaskDetailItem={listTaskDetailItem}
                                   index={index}
-                                >
-                                  {(provided) => {
-                                    return (
-                                      <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        className="w-full bg-white rounded py-3 px-2 mb-1 shadow"
-                                      >
-                                        <Row>
-                                          <Col span={18}>
-                                            {listTaskDetailItem.taskName && (
-                                              <div className="mb-1">
-                                                {listTaskDetailItem.taskName}
-                                              </div>
-                                            )}
-                                            {!listTaskDetailItem.taskName && (
-                                              <div className="mb-1 text-gray-400">
-                                                Unnamed
-                                              </div>
-                                            )}
-
-                                            <TaskItemPriorityBadge
-                                              priorityTask={
-                                                listTaskDetailItem.priorityTask
-                                              }
-                                            />
-                                          </Col>
-                                          <Col span={6}>
-                                            <div className="h-full w-full flex justify-end items-end">
-                                              <Avatar
-                                                size="small"
-                                                icon={<UserOutlined />}
-                                              />
-                                            </div>
-                                          </Col>
-                                        </Row>
-                                      </div>
-                                    );
-                                  }}
-                                </Draggable>
+                                />
                               );
                             }
                           )}

@@ -3,7 +3,7 @@ import React from "react";
 const TaskListTitle = ({ title }) => {
   const renderClassesAccordingToTitle = () => {
     const classes =
-      "inline-block px-2 py-0.5 mb-2 text-xs font-semibold rounded";
+      "inline-block px-2 py-0.5 mb-1 text-xs font-semibold rounded";
 
     if (title === "BACKLOG") {
       return classes + " bg-gray-200";
