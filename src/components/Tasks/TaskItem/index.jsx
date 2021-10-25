@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Col, Row } from "antd";
+import { Avatar, Col, Row, Tooltip } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Draggable } from "react-beautiful-dnd";
 import TaskItemPriorityBadge from "../TaskItemPriorityBadge";
@@ -30,7 +30,26 @@ const TaskItem = ({ listTaskDetailItem, index }) => {
               </Col>
               <Col span={6}>
                 <div className="h-full w-full flex justify-end items-end">
-                  <Avatar size="small" icon={<UserOutlined />} />
+                  {!listTaskDetailItem.assigness.length && (
+                    <Tooltip title="Unassigned" placement="top">
+                      <Avatar size="small" icon={<UserOutlined />} />
+                    </Tooltip>
+                  )}
+                  {listTaskDetailItem.assigness && (
+                    <Avatar.Group size="small" maxCount={2}>
+                      {listTaskDetailItem.assigness.map((asignee) => {
+                        return (
+                          <Tooltip
+                            key={asignee.id}
+                            title={asignee.name}
+                            placement="top"
+                          >
+                            <Avatar src={asignee.avatar} />
+                          </Tooltip>
+                        );
+                      })}
+                    </Avatar.Group>
+                  )}
                 </div>
               </Col>
             </Row>
