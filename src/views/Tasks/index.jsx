@@ -144,7 +144,13 @@ const Tasks = (props) => {
         <DragDropContext onDragEnd={handleDragEnd}>
           {clonedProjectDetail?.lstTask?.map((listTaskItem) => {
             return (
-              <Col span={6} key={listTaskItem.statusId}>
+              <Col
+                xs={{ span: 24 }}
+                sm={{ span: 12 }}
+                lg={{ span: 6 }}
+                key={listTaskItem.statusId}
+                className="mb-4"
+              >
                 <div className="bg-gray-100 w-full h-full p-2 rounded flex flex-col">
                   <TaskListTitle title={listTaskItem.statusName} />
 
