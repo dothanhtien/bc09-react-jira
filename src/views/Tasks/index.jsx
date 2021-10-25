@@ -4,18 +4,36 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
+import { useFormik } from "formik";
 import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import { createAction } from "../../store/actions";
 import { actionType } from "../../store/actions/type";
 import { fetchProjectDetail } from "../../store/actions/project";
-import { updateTaskStatus } from "../../store/actions/task";
+import { createTask, updateTaskStatus } from "../../store/actions/task";
 import TaskItem from "../../components/Tasks/TaskItem";
 
 const Tasks = (props) => {
   const dispatch = useDispatch();
   const projectDetail = useSelector((state) => state.project.projectDetail);
+  const serverError = useSelector((state) => state.task.error);
   const [clonedProjectDetail, setClonedProjectDetail] = useState(null);
+  const [showNewTaskTextarea, setShowNewTaskTextarea] = useState(false);
   const { projectId } = props.match.params;
+
+  const formik = useFormik({
+    initialValues: {
+      listUserAsign: [],
+      taskName: "",
+      description: "",
+      statusId: "1",
+      originalEstimate: 0,
+      timeTrackingSpent: 0,
+      timeTrackingRemaining: 0,
+      projectId: projectId,
+      typeId: 1,
+      priorityId: 2,
+    },
+  });
 
   useEffect(() => {
     dispatch(fetchProjectDetail(projectId));
@@ -28,6 +46,16 @@ const Tasks = (props) => {
   useEffect(() => {
     setClonedProjectDetail({ ...projectDetail });
   }, [projectDetail]);
+
+  useEffect(() => {
+    if (serverError === "Task already exists!") {
+      formik.setErrors({
+        taskName: serverError,
+        ...formik.errors,
+      });
+    }
+    // eslint-disable-next-line
+  }, [serverError]);
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -74,6 +102,33 @@ const Tasks = (props) => {
     );
   };
 
+  const handleKeyDownOnNewTaskTextarea = (e) => {
+    // keyCode = 27 <=> press ESC button
+    if (e.keyCode === 27) {
+      setShowNewTaskTextarea(false);
+    }
+
+    // keyCode = 13 <=> press ENTER button
+    if (e.keyCode === 13) {
+      e.preventDefault();
+
+      if (!formik.values.taskName.trim().length) {
+        return;
+      }
+
+      dispatch(
+        createTask(formik.values, () => {
+          formik.resetForm();
+          dispatch(fetchProjectDetail(projectId));
+        })
+      );
+    }
+  };
+
+  const handleBlurNewTaskTextarea = () => {
+    setShowNewTaskTextarea(false);
+  };
+
   return (
     <>
       <Breadcrumb className="mt-6">
@@ -116,10 +171,45 @@ const Tasks = (props) => {
                           {provided.placeholder}
 
                           {listTaskItem.statusName === "BACKLOG" && (
-                            <button className="h-8 hover:bg-gray-300 focus:bg-gray-300 w-full text-left font-medium py-1 px-3 rounded duration-300">
-                              <PlusOutlined className="mr-1" />
-                              <span>Create</span>
-                            </button>
+                            <>
+                              {!showNewTaskTextarea && (
+                                <button
+                                  onClick={() => setShowNewTaskTextarea(true)}
+                                  className="h-8 hover:bg-gray-300 focus:bg-gray-300 w-full text-left font-medium mt-1 py-1 px-3 rounded duration-300"
+                                >
+                                  <PlusOutlined className="mr-1" />
+                                  <span>Create</span>
+                                </button>
+                              )}
+                              {showNewTaskTextarea && (
+                                <>
+                                  <textarea
+                                    rows="2"
+                                    maxLength="255"
+                                    placeholder="What needs to be done?"
+                                    className={`w-full p-2 mt-1 border-2 outline-none rounded resize-none${
+                                      formik.errors.taskName
+                                        ? " border-red-500 focus:border-red-500"
+                                        : " border-blue-400 focus:border-blue-400"
+                                    }`}
+                                    onKeyDown={handleKeyDownOnNewTaskTextarea}
+                                    autoFocus
+                                    name="taskName"
+                                    value={formik.values.taskName}
+                                    onChange={formik.handleChange}
+                                    onBlur={handleBlurNewTaskTextarea}
+                                  ></textarea>
+                                  {formik.errors.taskName && (
+                                    <div
+                                      className="text-red-500"
+                                      style={{ marginTop: "-4px" }}
+                                    >
+                                      {formik.errors.taskName}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </>
                           )}
                         </div>
                       );
