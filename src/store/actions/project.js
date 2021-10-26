@@ -19,7 +19,6 @@ export const fetchProjectDetail = (projectId) => {
     try {
       const res = await projectService.fetchProjectDetail(projectId);
 
-      console.log(res);
       dispatch(createAction(actionType.SET_PROJECT_DETAIL, res.data.content));
     } catch (err) {
       console.log(err);

@@ -36,6 +36,22 @@ export const createTask = (data, callback) => {
           createAction(actionType.SET_TASK_ERROR, "Task already exists!")
         );
       }
+
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
+};
+
+export const fetchAllTaskTypes = async (dispatch) => {
+  try {
+    const res = await taskService.fetchAllTaskTypes();
+
+    dispatch(createAction(actionType.SET_TASK_TYPES, res.data.content));
+  } catch (err) {
+    console.log(err);
+  }
 };

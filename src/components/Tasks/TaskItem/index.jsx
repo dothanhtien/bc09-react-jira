@@ -3,6 +3,8 @@ import { Avatar, Col, Row, Tooltip } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Draggable } from "react-beautiful-dnd";
 import TaskItemPriorityBadge from "../TaskItemPriorityBadge";
+import { ReactComponent as NewTaskIcon } from "../../../assets/images/icons/new_task.svg";
+import { ReactComponent as BugIcon } from "../../../assets/images/icons/bug.svg";
 
 const TaskItem = ({ listTaskDetailItem, index }) => {
   return (
@@ -18,15 +20,34 @@ const TaskItem = ({ listTaskDetailItem, index }) => {
             <Row>
               <Col span={18}>
                 {listTaskDetailItem.taskName && (
-                  <div className="mb-1">{listTaskDetailItem.taskName}</div>
+                  <div className="mb-2">{listTaskDetailItem.taskName}</div>
                 )}
                 {!listTaskDetailItem.taskName && (
-                  <div className="mb-1 text-gray-400">Unnamed</div>
+                  <div className="mb-2 text-gray-400">Unnamed</div>
                 )}
 
-                <TaskItemPriorityBadge
-                  priorityTask={listTaskDetailItem.priorityTask}
-                />
+                <div className="flex justify-start items-center">
+                  <Tooltip
+                    title={
+                      listTaskDetailItem.taskTypeDetail.taskType
+                        .charAt(0)
+                        .toUpperCase() +
+                      listTaskDetailItem.taskTypeDetail.taskType.slice(1)
+                    }
+                    placement="bottom"
+                  >
+                    {listTaskDetailItem.taskTypeDetail.id === 1 && (
+                      <BugIcon className="mr-1" />
+                    )}
+                    {listTaskDetailItem.taskTypeDetail.id === 2 && (
+                      <NewTaskIcon className="mr-1" />
+                    )}
+                  </Tooltip>
+
+                  <TaskItemPriorityBadge
+                    priorityTask={listTaskDetailItem.priorityTask}
+                  />
+                </div>
               </Col>
               <Col span={6}>
                 <div className="h-full w-full flex justify-end items-end">
@@ -37,14 +58,14 @@ const TaskItem = ({ listTaskDetailItem, index }) => {
                   )}
                   {listTaskDetailItem.assigness && (
                     <Avatar.Group size="small" maxCount={2}>
-                      {listTaskDetailItem.assigness.map((asignee) => {
+                      {listTaskDetailItem.assigness.map((assignee) => {
                         return (
                           <Tooltip
-                            key={asignee.id}
-                            title={asignee.name}
+                            key={assignee.id}
+                            title={assignee.name}
                             placement="top"
                           >
-                            <Avatar src={asignee.avatar} />
+                            <Avatar src={assignee.avatar} />
                           </Tooltip>
                         );
                       })}

@@ -8,6 +8,10 @@ class TaskService {
   createTask(data) {
     return axiosClient.post("/api/Project/createTask", data);
   }
+
+  fetchAllTaskTypes() {
+    return axiosClient.get("/api/TaskType/getAll");
+  }
 }
 
 export default TaskService;

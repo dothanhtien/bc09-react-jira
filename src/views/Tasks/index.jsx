@@ -1,23 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { Breadcrumb, Col, Row, Typography } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Breadcrumb, Col, Row, Select, Tooltip, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
+import Swal from "sweetalert2";
 import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import { createAction } from "../../store/actions";
 import { actionType } from "../../store/actions/type";
 import { fetchProjectDetail } from "../../store/actions/project";
-import { createTask, updateTaskStatus } from "../../store/actions/task";
+import {
+  createTask,
+  fetchAllTaskTypes,
+  updateTaskStatus,
+} from "../../store/actions/task";
 import TaskItem from "../../components/Tasks/TaskItem";
+import { ReactComponent as NewTaskIcon } from "../../assets/images/icons/new_task.svg";
+import { ReactComponent as BugIcon } from "../../assets/images/icons/bug.svg";
 
 const Tasks = (props) => {
   const dispatch = useDispatch();
   const projectDetail = useSelector((state) => state.project.projectDetail);
-  const serverError = useSelector((state) => state.task.error);
+  const taskTypes = useSelector((state) => state.task.taskTypes);
+  const taskError = useSelector((state) => state.task.error);
   const [clonedProjectDetail, setClonedProjectDetail] = useState(null);
   const [showNewTaskTextarea, setShowNewTaskTextarea] = useState(false);
+  const newTaskRef = useRef(null);
   const { projectId } = props.match.params;
 
   const formik = useFormik({
@@ -37,6 +46,7 @@ const Tasks = (props) => {
 
   useEffect(() => {
     dispatch(fetchProjectDetail(projectId));
+    dispatch(fetchAllTaskTypes);
 
     return () => {
       dispatch(createAction(actionType.SET_PROJECT_DETAIL, null));
@@ -48,14 +58,26 @@ const Tasks = (props) => {
   }, [projectDetail]);
 
   useEffect(() => {
-    if (serverError === "Task already exists!") {
+    if (taskError === "Task already exists!") {
       formik.setErrors({
-        taskName: serverError,
+        taskName: taskError,
         ...formik.errors,
       });
     }
+
+    if (taskError === "User is unthorization!") {
+      Swal.fire({
+        icon: "error",
+        title: taskError,
+        customClass: {
+          confirmButton:
+            "flex justify-center items-center h-8 leading-none bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 focus:outline-none text-white hover:text-white font-medium py-1.5 px-3 rounded cursor-pointer",
+        },
+        buttonsStyling: false,
+      }).then(() => formik.resetForm());
+    }
     // eslint-disable-next-line
-  }, [serverError]);
+  }, [taskError]);
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -129,6 +151,16 @@ const Tasks = (props) => {
     setShowNewTaskTextarea(false);
   };
 
+  const handleTaskTypeClick = () => {
+    setShowNewTaskTextarea(true);
+  };
+
+  const handleTaskTypeDropdownVisibleChange = (open) => {
+    if (!open) {
+      newTaskRef.current.focus();
+    }
+  };
+
   return (
     <>
       <Breadcrumb className="mt-6">
@@ -189,27 +221,89 @@ const Tasks = (props) => {
                               )}
                               {showNewTaskTextarea && (
                                 <>
-                                  <textarea
-                                    rows="2"
-                                    maxLength="255"
-                                    placeholder="What needs to be done?"
-                                    className={`w-full p-2 mt-1 border-2 outline-none rounded resize-none${
+                                  <div
+                                    className={`bg-white border-2 mt-1 rounded${
                                       formik.errors.taskName
                                         ? " border-red-500 focus:border-red-500"
                                         : " border-blue-400 focus:border-blue-400"
                                     }`}
-                                    onKeyDown={handleKeyDownOnNewTaskTextarea}
-                                    autoFocus
-                                    name="taskName"
-                                    value={formik.values.taskName}
-                                    onChange={formik.handleChange}
-                                    onBlur={handleBlurNewTaskTextarea}
-                                  ></textarea>
-                                  {formik.errors.taskName && (
-                                    <div
-                                      className="text-red-500"
-                                      style={{ marginTop: "-4px" }}
+                                  >
+                                    <textarea
+                                      rows="2"
+                                      maxLength="255"
+                                      placeholder="What needs to be done?"
+                                      className="w-full pt-2 px-2 outline-none resize-none"
+                                      onKeyDown={handleKeyDownOnNewTaskTextarea}
+                                      autoFocus
+                                      name="taskName"
+                                      value={formik.values.taskName}
+                                      onChange={formik.handleChange}
+                                      onBlur={handleBlurNewTaskTextarea}
+                                      ref={newTaskRef}
+                                    ></textarea>
+
+                                    <Select
+                                      name="typeId"
+                                      value={formik.values.typeId}
+                                      onChange={(value) =>
+                                        formik.setFieldValue("typeId", value)
+                                      }
+                                      onClick={handleTaskTypeClick}
+                                      onDropdownVisibleChange={
+                                        handleTaskTypeDropdownVisibleChange
+                                      }
+                                      defaultValue={1}
+                                      bordered={false}
+                                      className="mb-1"
+                                      optionLabelProp="label"
+                                      dropdownMatchSelectWidth={false}
+                                      style={{ marginTop: "-8px" }}
                                     >
+                                      {taskTypes.map((type) => {
+                                        return (
+                                          <Select.Option
+                                            key={type.id}
+                                            value={type.id}
+                                            label={
+                                              <div className="h-full flex items-center">
+                                                <Tooltip
+                                                  title={
+                                                    type.taskType
+                                                      .charAt(0)
+                                                      .toUpperCase() +
+                                                    type.taskType.slice(1)
+                                                  }
+                                                  placement="bottom"
+                                                >
+                                                  {type.id === 1 && <BugIcon />}
+                                                  {type.id === 2 && (
+                                                    <NewTaskIcon />
+                                                  )}
+                                                </Tooltip>
+                                              </div>
+                                            }
+                                          >
+                                            <div className="flex justify-start items-center">
+                                              {type.id === 1 && (
+                                                <BugIcon className="mr-1" />
+                                              )}
+                                              {type.id === 2 && (
+                                                <NewTaskIcon className="mr-1" />
+                                              )}
+                                              <span>
+                                                {type.taskType
+                                                  .charAt(0)
+                                                  .toUpperCase() +
+                                                  type.taskType.slice(1)}
+                                              </span>
+                                            </div>
+                                          </Select.Option>
+                                        );
+                                      })}
+                                    </Select>
+                                  </div>
+                                  {formik.errors.taskName && (
+                                    <div className="text-red-500">
                                       {formik.errors.taskName}
                                     </div>
                                   )}
