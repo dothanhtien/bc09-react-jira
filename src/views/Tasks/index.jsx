@@ -50,6 +50,7 @@ const Tasks = (props) => {
 
     return () => {
       dispatch(createAction(actionType.SET_PROJECT_DETAIL, null));
+      dispatch(createAction(actionType.SET_TASK_ERROR, null));
     };
   }, [dispatch, projectId]);
 
