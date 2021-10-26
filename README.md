@@ -3,8 +3,9 @@
 - UI: antd, tailwindcss
 - Routing: react-router-dom
 - Store: redux, react-redux, redux-thunk
-- Form: formik, yup (Planning)
-- Others: react-beautiful-dnd
+- Form: formik, yup
+- Others: react-beautiful-dnd, sweetalert2
+
 ## Folder Structure
 ```
 ./src

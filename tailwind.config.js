@@ -821,6 +821,7 @@ module.exports = {
       40: "40",
       50: "50",
       header: "1030",
+      modal: "1050",
     },
   },
   variantOrder: [

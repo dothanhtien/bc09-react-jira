@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Avatar,
   Button,
@@ -12,7 +12,8 @@ import {
 import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchAllProjects } from "../../store/actions/project";
+import swal from "sweetalert";
+import { fetchAllProjects, deleteProject } from "../../store/actions/project";
 
 const Projects = (props) => {
   const dispatch = useDispatch();
@@ -27,24 +28,53 @@ const Projects = (props) => {
     dispatch(fetchAllProjects());
   }, [dispatch]);
 
-  const handleSearch = useCallback(
-    (e) => {
-      let params = {};
+  const handleSearch = (e) => {
+    let params = {};
 
-      if (e.target.value.length > 0) {
-        params = { keyword: e.target.value };
-      }
+    if (e.target.value.length > 0) {
+      params = { keyword: e.target.value };
+    }
 
-      if (debounceSearchRef.current) {
-        clearTimeout(debounceSearchRef.current);
-      }
+    if (debounceSearchRef.current) {
+      clearTimeout(debounceSearchRef.current);
+    }
 
-      debounceSearchRef.current = setTimeout(() => {
-        dispatch(fetchAllProjects(params));
-      }, 400);
-    },
-    [dispatch]
-  );
+    debounceSearchRef.current = setTimeout(() => {
+      dispatch(fetchAllProjects(params));
+    }, 400);
+  };
+
+  const showConfirmDeleteProjectModal = ({ projectName, id: projectId }) => {
+    return () => {
+      swal({
+        title: `Are you sure to delete ${projectName}?`,
+        icon: "info",
+        closeOnClickOutside: false,
+        dangerMode: true,
+        buttons: [true, "Delete"],
+      }).then((willDelete) => {
+        if (willDelete) {
+          handleDeleteProject(projectId);
+        }
+      });
+    };
+  };
+
+  const handleDeleteProject = (projectId) => {
+    dispatch(
+      deleteProject(projectId, () => {
+        showProjectDeletedSuccessfullyModal();
+      })
+    );
+  };
+
+  const showProjectDeletedSuccessfullyModal = () => {
+    dispatch(fetchAllProjects());
+    swal({
+      title: "Project deleted successfully",
+      icon: "success",
+    });
+  };
 
   return (
     <>
@@ -133,7 +163,7 @@ const Projects = (props) => {
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="moveToTrash">
-                  <button onClick={() => alert("This feature is coming soon!")}>
+                  <button onClick={showConfirmDeleteProjectModal(record)}>
                     Move to trash
                   </button>
                 </Menu.Item>
