@@ -36,12 +36,18 @@ class ProjectService {
   removeUserFromProject(data) {
     return axiosClient.post("/api/Project/removeUserFromProject", data);
   }
-  
+
   deleteProject(projectId) {
     return axiosClient.delete("/api/Project/deleteProject", {
       params: {
         projectId,
       },
+    });
+  }
+
+  fetchProjectDetail(projectId) {
+    return axiosClient.get("/api/Project/getProjectDetail", {
+      params: { id: projectId },
     });
   }
 }

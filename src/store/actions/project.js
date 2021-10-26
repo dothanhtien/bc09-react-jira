@@ -83,12 +83,11 @@ export const removeUserFromProject = (data, callback) => {
       if (callback) {
         callback();
       }
-    } catch(err)
-    {
+    } catch (err) {
       console.log(err);
     }
-  }
-}
+  };
+};
 
 export const deleteProject = (projectId, callback) => {
   return async (dispatch) => {
@@ -98,6 +97,18 @@ export const deleteProject = (projectId, callback) => {
       if (callback) {
         callback();
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
+export const fetchProjectDetail = (projectId) => {
+  return async (dispatch) => {
+    try {
+      const res = await projectService.fetchProjectDetail(projectId);
+
+      dispatch(createAction(actionType.SET_PROJECT_DETAIL, res.data.content));
     } catch (err) {
       console.log(err);
     }

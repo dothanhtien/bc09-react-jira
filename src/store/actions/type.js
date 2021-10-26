@@ -10,6 +10,8 @@ export const actionType = {
   SET_PROJECT_DETAIL: "SET_PROJECT_DETAIL",
 
   // tasks
+  SET_TASK_TYPES: "SET_TASK_TYPES",
+  SET_TASK_ERROR: "SET_TASK_ERROR",
 
   // users
   SET_USER_LIST: "SET_USER_LIST",
