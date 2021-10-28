@@ -80,6 +80,7 @@ const App = () => {
           layout={MainLayout}
           redirectPath="/login"
         />
+        
       </Switch>
     </BrowserRouter>
   );
