@@ -19,6 +19,9 @@ import ProjectDetail from "./views/Projects/Detail";
 import EditProject from "./views/Projects/Edit";
 
 import Tasks from "./views/Tasks";
+import UserManagment from "./views/Users/UserManagement";
+import UserLayout from "./HOCs/layouts/Users";
+import EditUser from "./views/Users/EditUsers";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -78,6 +81,20 @@ const App = () => {
           exact
           component={Tasks}
           layout={MainLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/users"
+          exact
+          component={UserManagment}
+          layout={UserLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/users/edit"
+          exact
+          component={EditUser}
+          layout={UserLayout}
           redirectPath="/login"
         />
         
