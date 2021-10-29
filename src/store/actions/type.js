@@ -8,6 +8,7 @@ export const actionType = {
   SET_PROJECT_ERROR: "SET_PROJECT_ERROR",
   SET_PROJECT_MEMBERS: "SET_PROJECT_MEMBERS",
   SET_PROJECT_DETAIL: "SET_PROJECT_DETAIL",
+  SET_PROJECT_EDIT_INFO: "SET_PROJECT_EDIT_INFO",
 
   // tasks
   SET_TASK_TYPES: "SET_TASK_TYPES",
@@ -15,4 +16,5 @@ export const actionType = {
 
   // users
   SET_USER_LIST: "SET_USER_LIST",
+  
 };

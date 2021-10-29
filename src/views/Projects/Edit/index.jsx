@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Breadcrumb, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProjectCategories } from "../../../store/actions/project";
+import { fetchAllProjectCategories, updateProject } from "../../../store/actions/project";
 import { Form, Input, Button, Select } from "antd";
 import { Link } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
@@ -11,7 +11,7 @@ import { createAction } from "../../../store/actions";
 import { actionType } from "../../../store/actions/type";
 import AddMembersModal from "../../../components/Projects/AddMembersModal";
 
-const EditProject = () => {
+const EditProject = (props) => {
 
   const dispatch = useDispatch();
 
@@ -66,7 +66,7 @@ const EditProject = () => {
     formik.setFieldValue("description", newValue);
   };
 
-  const handleSubmit = () => {
+  const handleUpdateProject = () => {
     formik.setTouched({
       projectName: true,
       categoryId: true,
@@ -75,10 +75,9 @@ const EditProject = () => {
     if (!formik.isValid) return;
 
     dispatch(
-      // createProjectAuthorize(formik.values, () => {
-        // formik.resetForm();
-        // setShowAddMembersModal(true);
-      // })
+      updateProject( formik.values, () => {
+        props.history.push("/projects")
+      })
     );
   };
 
@@ -114,28 +113,28 @@ const EditProject = () => {
               Project name <span className="text-red-700">*</span>
             </>
           }
-          // help={formik.touched.projectName && formik.errors.projectName}
-          // validateStatus={
-          //   formik.touched.projectName && !!formik.errors.projectName
-          //     ? "error"
-          //     : ""
-          // }
+          help={formik.touched.projectName && formik.errors.projectName}
+          validateStatus={
+            formik.touched.projectName && !!formik.errors.projectName
+              ? "error"
+              : ""
+          }
         >
           <Input
-          // name="projectName"
+          name="projectName"
           value={formik.values.projectName}
-          // onChange={formik.handleChange}
-          // onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           />
         </Form.Item>
 
         <Form.Item
           label={
             <>
-              Project category <span className="text-red-700">*</span>
+              Project category 
             </>
           }
-          // help={formik.touched.categoryId && formik.errors.categoryId}
+          help={formik.touched.categoryId && formik.errors.categoryId}
           validateStatus={
             formik.touched.categoryId && !!formik.errors.categoryId
               ? "error"
@@ -148,7 +147,7 @@ const EditProject = () => {
             name="categoryId"
             defaultValue={formik.values.categoryId}
             value={formik.values.categoryId}
-            // onChange={(value) => formik.setFieldValue("categoryId", value)}
+            onChange={(value) => formik.setFieldValue("categoryId", value)}
           >
           {projectCategories.map(({id, projectCategoryName}, i) => {
             return (
@@ -181,9 +180,9 @@ const EditProject = () => {
             }}
             name="description"
             value={formik.values.description}
-            // onEditorChange={(newValue, editor) =>
-            //   handleEditorChange(newValue, editor)
-            // }
+            onEditorChange={(newValue, editor) =>
+              handleEditorChange(newValue, editor)
+            }
           />
         </Form.Item>
 
@@ -196,6 +195,7 @@ const EditProject = () => {
           </Link>
 
           <Button
+          onClick={handleUpdateProject}
             htmlType="submit"
             className="flex justify-center items-center h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
           >
@@ -205,9 +205,7 @@ const EditProject = () => {
       </Form>
       {projectDetail && (
         <AddMembersModal
-          visible={showAddMembersModal}
           onCancel={handleCancel}
-          project={projectDetail}
         />
       )}
     </div>

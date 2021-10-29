@@ -37,6 +37,10 @@ const reducer = (state = initialState, { type, payload }) => {
       state.error = payload;
       return { ...state };
     }
+    case actionType.SET_PROJECT_EDIT_INFO: {
+      state.projectEditInfo= payload;
+      return { ...state };
+    }
     default:
       return state;
   }

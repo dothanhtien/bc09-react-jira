@@ -1,6 +1,7 @@
 import { projectService } from "../../services";
 import { createAction } from ".";
 import { actionType } from "./type";
+import { notifitying } from "../../utils/notification";
 
 export const fetchAllProjects = (params) => {
   return async (dispatch) => {
@@ -114,3 +115,19 @@ export const fetchProjectDetail = (projectId) => {
     }
   };
 };
+
+export const updateProject = (data, callBack)=>{
+  return async(dispatch)=>{
+    try{
+      const res = await projectService.updateProject(data)
+      console.log(res.data);
+
+      callBack()
+      notifitying('success', 'Project successfully updated')
+    }catch(err){
+      console.log({...err});
+      notifitying('warning', 'User failed to be deleted')
+
+    }
+  }
+}
