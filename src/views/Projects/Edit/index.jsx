@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Breadcrumb, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProjectCategories, updateProject } from "../../../store/actions/project";
@@ -7,9 +7,7 @@ import { Link } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import { useFormik } from "formik";
 import { createProjectSchema } from "../../../services/project";
-import { createAction } from "../../../store/actions";
-import { actionType } from "../../../store/actions/type";
-import AddMembersModal from "../../../components/Projects/AddMembersModal";
+
 
 const EditProject = (props) => {
 
@@ -21,8 +19,6 @@ const EditProject = (props) => {
     (state) => state.project.projectCategories
   );
   const serverError = useSelector((state) => state.project.error);
-  const projectDetail = useSelector((state) => state.project.projectDetail);
-  const [showAddMembersModal, setShowAddMembersModal] = useState(true);
 
   const formik = useFormik({
     initialValues: {
@@ -34,8 +30,7 @@ const EditProject = (props) => {
     },
     validationSchema: createProjectSchema,
     validateOnMount: true,
-    // sau khi dung formik.resetForm(), tao project lan nua ma khong nhap gi thi formik.isValid van la true
-    // dung initialErrors de xu ly van de nay
+  
     initialErrors: {
       projectName: "",
       description: "",
@@ -81,11 +76,6 @@ const EditProject = (props) => {
     );
   };
 
-  const handleCancel = () => {
-    dispatch(createAction(actionType.SET_PROJECT_DETAIL, null));
-    setShowAddMembersModal(false);
-  };
-
   return (
     <div style={{ maxWidth: 980 }} className="mx-auto">
       <Breadcrumb className="mt-6">
@@ -96,8 +86,7 @@ const EditProject = (props) => {
 
       <Typography.Title level={3}>Update project</Typography.Title>
 
-      <Form layout="vertical">
-        {/* <Form layout="vertical" onFinish={handleSubmit}> */}
+        <Form layout="vertical" onFinish={handleUpdateProject}>
         <Form.Item
           label={
             <>
@@ -195,7 +184,6 @@ const EditProject = (props) => {
           </Link>
 
           <Button
-          onClick={handleUpdateProject}
             htmlType="submit"
             className="flex justify-center items-center h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
           >
@@ -203,11 +191,7 @@ const EditProject = (props) => {
           </Button>
         </div>
       </Form>
-      {projectDetail && (
-        <AddMembersModal
-          onCancel={handleCancel}
-        />
-      )}
+  
     </div>
   );
 };
