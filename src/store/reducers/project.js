@@ -6,6 +6,13 @@ const initialState = {
   projectMembers: [],
   projectDetail: null,
   error: null,
+  projectEditInfo:{
+    "id": 0,
+    "projectName": "string",
+    "creator": 0,
+    "description": "string",
+    "categoryId": 1
+  }
 };
 
 const reducer = (state = initialState, { type, payload }) => {

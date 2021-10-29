@@ -19,32 +19,10 @@ const Header = () => {
   const projectsMenu = (
     <Menu className={classes.menu}>
       
-      <Menu.Item key="project" className="h-10 py-2 px-5">
-        <Link to="/users">User List</Link>
+      <Menu.Item key="project" className=" py-2 px-5 text-blue-700 h-8 font-medium">
+        <Link to="/projects">Projects</Link>
       </Menu.Item>
 
-      <Menu.Item key="newProject" className="h-10 py-2 px-5">
-        <Link to="/users/edit">Edit Users</Link>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const settingsMenu = (
-    <Menu className={classes.menu}>
-      <Menu.ItemGroup
-        title={
-          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
-            Atlassian Projects
-          </span>
-        }
-      >
-        <Menu.Item
-          key="personalSettings"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/projects">Show All Projects</Link>
-        </Menu.Item>
-      </Menu.ItemGroup>
     </Menu>
   );
 
@@ -131,19 +109,6 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center">
-            <Dropdown
-              overlay={settingsMenu}
-              trigger={["click"]}
-              className="mr-1"
-            >
-              <Tooltip title="Settings">
-                <Button
-                  className="border-0 shadow-none hover:bg-blue-200 focus:bg-blue-200 hover:text-blue-500 focus:text-blue-500"
-                  shape="circle"
-                  icon={<SettingFilled />}
-                />
-              </Tooltip>
-            </Dropdown>
             <Dropdown overlay={profileMenu} trigger={["click"]}>
               <Tooltip
                 placement="bottomRight"

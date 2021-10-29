@@ -44,6 +44,8 @@ const Projects = (props) => {
     }, 400);
   };
 
+
+
   const showConfirmDeleteProjectModal = ({ projectName, id: projectId }) => {
     return () => {
       swal({
@@ -158,7 +160,9 @@ const Projects = (props) => {
             const menu = (
               <Menu className="rounded">
                 <Menu.Item key="projectSettings">
-                  <Link to={`/projects/${record.id}/edit`}>
+                  <Link to={`/projects/${record.id}/edit`} onClick={()=>{
+                    console.log(record);
+                  }}>
                     Project settings
                   </Link>
                 </Menu.Item>

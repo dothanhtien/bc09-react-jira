@@ -178,7 +178,7 @@ const UserManagment = (props) => {
       render: (text, record, index) => (
         <Space size="small">
           {/* edit button */}
-          <Link to="/users/edit" className="text-blue-500 rounded  p-2 ">
+          <Link to={`/users/${record.userId}/edit`} className="text-blue-500 rounded  p-2 ">
             <EditOutlined />
           </Link>
 
@@ -187,7 +187,6 @@ const UserManagment = (props) => {
             title="Are you sure to delete this project?"
             onConfirm={() => {
               dispatch(deleteUser(record.userId));
-              console.log("record", record);
             }}
             okText="Yes"
             cancelText="No"

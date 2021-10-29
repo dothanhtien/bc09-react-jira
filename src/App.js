@@ -91,7 +91,7 @@ const App = () => {
           redirectPath="/login"
         />
         <PrivateRoute
-          path="/users/edit"
+          path="/users/:id/edit"
           exact
           component={EditUser}
           layout={UserLayout}
