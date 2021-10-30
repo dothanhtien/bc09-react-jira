@@ -12,7 +12,6 @@ import {
   Space,
   Typography,
 } from "antd";
-import { Editor } from "@tinymce/tinymce-react";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +19,7 @@ import {
   fetchTaskDetail,
   updateDescription,
 } from "../../../store/actions/task";
+import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
 
 const EditTaskModal = (props) => {
   const dispatch = useDispatch();
@@ -87,10 +87,6 @@ const EditTaskModal = (props) => {
     }
 
     // call api here
-  };
-
-  const handleEditorChange = (newValue, editor) => {
-    formik.setFieldValue("description", newValue);
   };
 
   const handleClickDescriptionLabel = () => {
@@ -196,7 +192,7 @@ const EditTaskModal = (props) => {
 
             {!showDescription && (
               <div
-                className="p-1 hover:bg-gray-200 rounded custom-html-parser"
+                className="p-1 hover:bg-gray-200 duration-300 rounded custom-html-parser"
                 onClick={handleClickDescriptionLabel}
               >
                 {formik.values.description === "" && (
@@ -211,28 +207,11 @@ const EditTaskModal = (props) => {
             {showDescription && (
               <Form className="pl-1">
                 <Form.Item>
-                  <Editor
-                    apiKey="gof6u0hypfiazxgjtu3s1sr4rzde9h8k4ooeqc7q2h3t7dpn"
-                    init={{
-                      menubar: false,
-                      plugins: [
-                        "advlist autolink lists link image charmap print preview anchor",
-                        "searchreplace visualblocks code fullscreen",
-                        "insertdatetime media table paste code help wordcount",
-                      ],
-                      toolbar:
-                        "formatselect | " +
-                        "bold italic underline forecolor strikethrough superscript subscript | alignleft aligncenter | " +
-                        "link | " +
-                        "alignright alignjustify | bullist numlist outdent indent | " +
-                        "removeformat | help",
-                      content_style:
-                        "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue'; font-size:14px }",
-                    }}
+                  <TinyMCEEditor
                     name="description"
                     value={formik.values.description}
-                    onEditorChange={(newValue, editor) =>
-                      handleEditorChange(newValue, editor)
+                    onEditorChange={(newValue) =>
+                      formik.setFieldValue("description", newValue)
                     }
                   />
                 </Form.Item>
