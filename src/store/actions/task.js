@@ -55,3 +55,25 @@ export const fetchAllTaskTypes = async (dispatch) => {
     console.log(err);
   }
 };
+
+export const fetchTaskDetail = (taskId) => {
+  return async (dispatch) => {
+    try {
+      const res = await taskService.fetchTaskDetail(taskId);
+
+      dispatch(createAction(actionType.SET_TASK_DETAIL, res.data.content));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
+export const updateTask = (data) => {
+  return async (dispatch) => {
+    try {
+      await taskService.updateTask(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};

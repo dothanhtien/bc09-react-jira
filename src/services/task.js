@@ -12,6 +12,16 @@ class TaskService {
   fetchAllTaskTypes() {
     return axiosClient.get("/api/TaskType/getAll");
   }
+
+  fetchTaskDetail(taskId) {
+    return axiosClient.get("/api/Project/getTaskDetail", {
+      params: { taskId },
+    });
+  }
+
+  updateTask(data) {
+    return axiosClient.post("/api/Project/updateTask", data);
+  }
 }
 
 export default TaskService;
