@@ -196,7 +196,7 @@ const EditTaskModal = (props) => {
 
             {!showDescription && (
               <div
-                className="p-1 hover:bg-gray-200 rounded"
+                className="p-1 hover:bg-gray-200 rounded custom-html-parser"
                 onClick={handleClickDescriptionLabel}
               >
                 {formik.values.description === "" && (
