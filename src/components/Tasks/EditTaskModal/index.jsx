@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import parse from "html-react-parser";
 import {
   Button,
   Col,
@@ -11,10 +12,14 @@ import {
   Space,
   Typography,
 } from "antd";
+import { Editor } from "@tinymce/tinymce-react";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTaskDetail } from "../../../store/actions/task";
+import {
+  fetchTaskDetail,
+  updateDescription,
+} from "../../../store/actions/task";
 
 const EditTaskModal = (props) => {
   const dispatch = useDispatch();
@@ -22,6 +27,7 @@ const EditTaskModal = (props) => {
   const prevValues = useRef(null);
   const taskDetail = useSelector((state) => state.task.taskDetail);
   const [showTaskNameInput, setShowTaskNameInput] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -39,12 +45,6 @@ const EditTaskModal = (props) => {
     });
     // eslint-disable-next-line
   }, [taskDetail]);
-
-  const handleCancel = () => {
-    setShowTaskNameInput(false);
-
-    props.onCancel();
-  };
 
   const handleClickTaskNameLabel = async () => {
     prevValues.current = { ...formik.values };
@@ -89,6 +89,39 @@ const EditTaskModal = (props) => {
     // call api here
   };
 
+  const handleEditorChange = (newValue, editor) => {
+    formik.setFieldValue("description", newValue);
+  };
+
+  const handleClickDescriptionLabel = () => {
+    prevValues.current = { ...formik.values };
+    setShowDescription(true);
+  };
+
+  const handleCancelEditDescription = () => {
+    formik.setFieldValue("description", prevValues.current.description);
+    setShowDescription(false);
+  };
+
+  const handleSubmitDescription = async () => {
+    // check if description no changed
+    if (formik.values.description === prevValues.current.description) {
+      return;
+    }
+
+    const data = {
+      taskId: formik.values.taskId,
+      description: formik.values.description,
+    };
+
+    dispatch(
+      updateDescription(data, () => {
+        dispatch(fetchTaskDetail(props.task.taskId));
+        setShowDescription(false);
+      })
+    );
+  };
+
   return (
     <Modal
       title={
@@ -97,8 +130,7 @@ const EditTaskModal = (props) => {
         </Typography.Title>
       }
       visible={props.visible}
-      onCancel={handleCancel}
-      centered
+      onCancel={props.onCancel}
       maskStyle={{ zIndex: 1050 }}
       wrapClassName="z-modal"
       className="z-modal"
@@ -109,7 +141,7 @@ const EditTaskModal = (props) => {
     >
       <Row gutter={32}>
         <Col span={14}>
-          <div className="relative">
+          <div className="task-name-container relative">
             <Typography.Title
               level={4}
               className={`p-1 rounded hover:bg-gray-200 duration-300 border border-transparent hover:border-gray-200${
@@ -155,6 +187,72 @@ const EditTaskModal = (props) => {
                 />
               </div>
             </Form>
+          </div>
+
+          <div className="description-container">
+            <Typography.Text strong className="pl-1">
+              Description
+            </Typography.Text>
+
+            {!showDescription && (
+              <div
+                className="p-1 hover:bg-gray-200 rounded"
+                onClick={handleClickDescriptionLabel}
+              >
+                {formik.values.description === "" && (
+                  <Typography.Text type="secondary">
+                    Add a description...
+                  </Typography.Text>
+                )}
+                {formik.values.description && parse(formik.values.description)}
+              </div>
+            )}
+
+            {showDescription && (
+              <Form className="pl-1">
+                <Form.Item>
+                  <Editor
+                    apiKey="gof6u0hypfiazxgjtu3s1sr4rzde9h8k4ooeqc7q2h3t7dpn"
+                    init={{
+                      menubar: false,
+                      plugins: [
+                        "advlist autolink lists link image charmap print preview anchor",
+                        "searchreplace visualblocks code fullscreen",
+                        "insertdatetime media table paste code help wordcount",
+                      ],
+                      toolbar:
+                        "formatselect | " +
+                        "bold italic underline forecolor strikethrough superscript subscript | alignleft aligncenter | " +
+                        "link | " +
+                        "alignright alignjustify | bullist numlist outdent indent | " +
+                        "removeformat | help",
+                      content_style:
+                        "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue'; font-size:14px }",
+                    }}
+                    name="description"
+                    value={formik.values.description}
+                    onEditorChange={(newValue, editor) =>
+                      handleEditorChange(newValue, editor)
+                    }
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <Button
+                    className="bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded mr-1"
+                    onClick={handleSubmitDescription}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    className="hover:bg-gray-200 text-gray-700 hover:text-gray-700 font-semibold border-transparent hover:border-gray-200 rounded shadow-none"
+                    onClick={handleCancelEditDescription}
+                  >
+                    Cancel
+                  </Button>
+                </Form.Item>
+              </Form>
+            )}
           </div>
         </Col>
 

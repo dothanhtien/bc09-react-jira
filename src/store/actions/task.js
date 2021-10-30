@@ -77,3 +77,17 @@ export const updateTask = (data) => {
     }
   };
 };
+
+export const updateDescription = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      await taskService.updateDescription(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
