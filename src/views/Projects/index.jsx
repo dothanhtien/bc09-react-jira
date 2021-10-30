@@ -12,7 +12,7 @@ import {
 import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import swal from "sweetalert";
+import Swal from "sweetalert2";
 import { fetchAllProjects, deleteProject } from "../../store/actions/project";
 
 const Projects = (props) => {
@@ -46,14 +46,22 @@ const Projects = (props) => {
 
   const showConfirmDeleteProjectModal = ({ projectName, id: projectId }) => {
     return () => {
-      swal({
-        title: `Are you sure to delete ${projectName}?`,
+      Swal.fire({
+        title: `Are you sure to delete\n${projectName}?`,
         icon: "info",
-        closeOnClickOutside: false,
-        dangerMode: true,
-        buttons: [true, "Delete"],
-      }).then((willDelete) => {
-        if (willDelete) {
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+        allowOutsideClick: false,
+        focusCancel: true,
+        buttonsStyling: false,
+        customClass: {
+          confirmButton:
+            "flex justify-center items-center h-8 leading-none mr-2 bg-red-600 hover:bg-red-500 focus:bg-red-500 text-white hover:text-white focus:text-white font-base py-1.5 px-3 rounded border-0",
+          cancelButton:
+            "flex justify-center items-center h-8 leading-none mr-2 bg-gray-300 hover:bg-gray-400 focus:bg-gray-300 text-gray-700 hover:text-gray-700 focus:text-gray-700 font-base py-1.5 px-3 rounded border-0",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
           handleDeleteProject(projectId);
         }
       });
@@ -70,9 +78,14 @@ const Projects = (props) => {
 
   const showProjectDeletedSuccessfullyModal = () => {
     dispatch(fetchAllProjects());
-    swal({
+    Swal.fire({
       title: "Project deleted successfully",
       icon: "success",
+      customClass: {
+        confirmButton:
+          "flex justify-center items-center h-8 leading-none bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 focus:outline-none text-white hover:text-white font-medium py-1.5 px-3 rounded cursor-pointer",
+      },
+      buttonsStyling: false,
     });
   };
 
