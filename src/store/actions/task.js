@@ -91,3 +91,17 @@ export const updateDescription = (data, callback) => {
     }
   };
 };
+
+export const updatePriority = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      await taskService.updatePriority(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};

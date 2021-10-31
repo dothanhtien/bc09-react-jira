@@ -9,7 +9,6 @@ import {
   Modal,
   Row,
   Select,
-  Space,
   Typography,
 } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -18,8 +17,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTaskDetail,
   updateDescription,
+  updatePriority,
 } from "../../../store/actions/task";
 import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
+import { ReactComponent as HighPriorityIcon } from "../../../assets/images/icons/priorities/high.svg";
+import { ReactComponent as MediumPriorityIcon } from "../../../assets/images/icons/priorities/medium.svg";
+import { ReactComponent as LowPriorityIcon } from "../../../assets/images/icons/priorities/low.svg";
+import { ReactComponent as LowestPriorityIcon } from "../../../assets/images/icons/priorities/lowest.svg";
 
 const EditTaskModal = (props) => {
   const dispatch = useDispatch();
@@ -114,6 +118,19 @@ const EditTaskModal = (props) => {
       updateDescription(data, () => {
         dispatch(fetchTaskDetail(props.task.taskId));
         setShowDescription(false);
+      })
+    );
+  };
+
+  const handleChangePriorityId = (value) => {
+    const data = {
+      taskId: formik.values.taskId,
+      priorityId: value,
+    };
+
+    dispatch(
+      updatePriority(data, () => {
+        dispatch(fetchTaskDetail(props.task.taskId));
       })
     );
   };
@@ -249,11 +266,65 @@ const EditTaskModal = (props) => {
             </Form.Item>
           </Form>
 
-          <Space direction="vertical">
-            <Collapse defaultActiveKey={["1"]}>
+          <div>
+            <Collapse
+              defaultActiveKey={["1"]}
+              expandIconPosition="right"
+              className="mb-2"
+            >
               <Collapse.Panel
                 header={<Typography.Text strong>Details</Typography.Text>}
-                showArrow={false}
+                key="1"
+              >
+                <Form layout="horizontal">
+                  <Form.Item
+                    label={<Typography.Text strong>Priority</Typography.Text>}
+                    colon={false}
+                    labelCol={{ span: 8 }}
+                    labelAlign="left"
+                    className="mb-0"
+                  >
+                    <Select
+                      name="priorityId"
+                      value={formik.values.priorityId}
+                      onChange={handleChangePriorityId}
+                      showArrow={false}
+                      bordered={false}
+                      className="hover:bg-gray-200 focus:bg-red-300 rounded"
+                    >
+                      <Select.Option value={1}>
+                        <div className="flex justify-start items-center">
+                          <HighPriorityIcon className="mr-2" />
+                          <span>High</span>
+                        </div>
+                      </Select.Option>
+                      <Select.Option value={2}>
+                        <div className="flex justify-start items-center">
+                          <MediumPriorityIcon className="mr-2" />
+                          <span>Medium</span>
+                        </div>
+                      </Select.Option>
+                      <Select.Option value={3}>
+                        <div className="flex justify-start items-center">
+                          <LowPriorityIcon className="mr-2" />
+                          <span>Low</span>
+                        </div>
+                      </Select.Option>
+                      <Select.Option value={4}>
+                        <div className="flex justify-start items-center">
+                          <LowestPriorityIcon className="mr-2" />
+                          <span>Lowest</span>
+                        </div>
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Form>
+              </Collapse.Panel>
+            </Collapse>
+
+            <Collapse expandIconPosition="right">
+              <Collapse.Panel
+                header={<Typography.Text strong>More fields</Typography.Text>}
                 key="1"
               >
                 <Typography.Text>
@@ -263,20 +334,7 @@ const EditTaskModal = (props) => {
                 </Typography.Text>
               </Collapse.Panel>
             </Collapse>
-            <Collapse>
-              <Collapse.Panel
-                header={<Typography.Text strong>More fields</Typography.Text>}
-                showArrow={false}
-                key="2"
-              >
-                <Typography.Text>
-                  A dog is a type of domesticated animal. Known for its loyalty
-                  and faithfulness, it can be found as a welcome guest in many
-                  households across the world.
-                </Typography.Text>
-              </Collapse.Panel>
-            </Collapse>
-          </Space>
+          </div>
         </Col>
       </Row>
     </Modal>

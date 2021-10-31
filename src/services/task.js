@@ -26,6 +26,10 @@ class TaskService {
   updateDescription(data) {
     return axiosClient.put("/api/Project/updateDescription", data);
   }
+
+  updatePriority(data) {
+    return axiosClient.put("/api/Project/updatePriority", data);
+  }
 }
 
 export default TaskService;
