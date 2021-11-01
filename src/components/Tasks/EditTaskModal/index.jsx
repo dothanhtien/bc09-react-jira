@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import parse from "html-react-parser";
 import {
+  Avatar,
   Button,
   Col,
   Collapse,
@@ -9,6 +10,7 @@ import {
   Modal,
   Row,
   Select,
+  Tag,
   Typography,
 } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -29,6 +31,7 @@ const EditTaskModal = (props) => {
   const dispatch = useDispatch();
   const taskNameInputRef = useRef(null);
   const prevValues = useRef(null);
+  const projectDetail = useSelector((state) => state.project.projectDetail);
   const taskDetail = useSelector((state) => state.task.taskDetail);
   const [showTaskNameInput, setShowTaskNameInput] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
@@ -133,6 +136,10 @@ const EditTaskModal = (props) => {
         dispatch(fetchTaskDetail(props.task.taskId));
       })
     );
+  };
+
+  const handleChangeAssignees = (value) => {
+    console.log(value);
   };
 
   return (
@@ -254,8 +261,8 @@ const EditTaskModal = (props) => {
 
         <Col span={10}>
           <Form>
-            <Form.Item className="mb-2">
-              <Select defaultValue={1}>
+            <Form.Item className="mb-2 w-min">
+              <Select defaultValue={1} dropdownMatchSelectWidth={false}>
                 <Select.Option value={1}>BACKLOG</Select.Option>
                 <Select.Option value={2}>
                   SELECTED FOR DEVELOPMENT
@@ -278,6 +285,56 @@ const EditTaskModal = (props) => {
               >
                 <Form layout="horizontal">
                   <Form.Item
+                    label={<Typography.Text strong>Assignees</Typography.Text>}
+                    colon={false}
+                    labelCol={{ span: 8 }}
+                    labelAlign="left"
+                  >
+                    <Select
+                      mode="multiple"
+                      style={{ width: "100%" }}
+                      placeholder="Choose assignees..."
+                      defaultValue={[]}
+                      onChange={handleChangeAssignees}
+                      bordered={false}
+                      className="hover:bg-gray-200 rounded"
+                      tagRender={(props) => {
+                        const onPreventMouseDown = (event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                        };
+
+                        return (
+                          <Tag
+                            closable
+                            onMouseDown={onPreventMouseDown}
+                            onClose={props.onClose}
+                            className="flex items-center py-1 my-0.5 rounded"
+                          >
+                            {props.label}
+                          </Tag>
+                        );
+                      }}
+                    >
+                      {projectDetail.members.map((member) => {
+                        return (
+                          <Select.Option value={member.userId}>
+                            <div className="flex justify-start items-center">
+                              <Avatar
+                                size="small"
+                                className="mr-1"
+                                src={member.avatar}
+                              />
+                              <Typography.Text>{member.name}</Typography.Text>
+                            </div>
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  </Form.Item>
+                </Form>
+                <Form layout="horizontal">
+                  <Form.Item
                     label={<Typography.Text strong>Priority</Typography.Text>}
                     colon={false}
                     labelCol={{ span: 8 }}
@@ -290,7 +347,7 @@ const EditTaskModal = (props) => {
                       onChange={handleChangePriorityId}
                       showArrow={false}
                       bordered={false}
-                      className="hover:bg-gray-200 focus:bg-red-300 rounded"
+                      className="hover:bg-gray-200 rounded"
                     >
                       <Select.Option value={1}>
                         <div className="flex justify-start items-center">
