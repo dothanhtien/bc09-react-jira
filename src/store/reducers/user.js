@@ -2,6 +2,7 @@ import { actionType } from "../actions/type";
 
 const initialState = {
   userList: [],
+  projectMembers: [],
 };
 
 const reducer = (state = initialState, { type, payload }) => {
@@ -10,6 +11,11 @@ const reducer = (state = initialState, { type, payload }) => {
       state.userList = payload;
       return { ...state };
     }
+    case actionType.GET_PROJECT_MEMBERS:
+      state.projectMembers = payload;
+      console.log(payload);
+      
+      return { ...state };
     default:
       return state;
   }

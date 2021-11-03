@@ -1,6 +1,7 @@
 import { taskService } from "../../services";
 import { createAction } from ".";
 import { actionType } from "./type";
+import { notifitying } from "../../utils/notification";
 
 export const updateTaskStatus = ({ taskId, statusId }, callback) => {
   return async (dispatch) => {
@@ -26,7 +27,13 @@ export const createTask = (data, callback) => {
       if (callback) {
         callback();
       }
+
+      notifitying("success", "Task successfully created!");
+      dispatch(createAction(actionType.HIDE_DRAWER));
+
     } catch (err) {
+      notifitying('warning', "Task failed to be created")
+      console.log({...err});
       console.log(err);
       if (
         err.response.data.statusCode === 500 &&

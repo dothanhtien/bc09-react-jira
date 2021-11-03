@@ -22,6 +22,7 @@ import Tasks from "./views/Tasks";
 import UserManagment from "./views/Users/UserManagement";
 import UserLayout from "./HOCs/layouts/Users";
 import EditUser from "./views/Users/EditUsers";
+import DrawerModalPopup from "./HOCs/DrawerModalPopup";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,8 @@ const App = () => {
 
   return (
     <BrowserRouter>
+ 
+      <DrawerModalPopup/>
       <Switch>
         <Redirect exact from="/" to="/login" />
         <AuthRoute
