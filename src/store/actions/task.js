@@ -105,3 +105,31 @@ export const updatePriority = (data, callback) => {
     }
   };
 };
+
+export const assignUserToTask = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      taskService.assignUserToTask(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
+export const removeUserFromTask = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      taskService.removeUserFromTask(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};

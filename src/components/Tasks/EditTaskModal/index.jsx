@@ -17,7 +17,9 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  assignUserToTask,
   fetchTaskDetail,
+  removeUserFromTask,
   updateDescription,
   updatePriority,
   updateTaskStatus,
@@ -41,6 +43,7 @@ const EditTaskModal = (props) => {
   const formik = useFormik({
     initialValues: {
       taskName: "",
+      assignees: [],
     },
   });
 
@@ -51,6 +54,9 @@ const EditTaskModal = (props) => {
   useEffect(() => {
     formik.setValues({
       ...taskDetail,
+      assignees: taskDetail
+        ? [...taskDetail.assigness.map((assignee) => assignee.id)]
+        : [],
     });
     // eslint-disable-next-line
   }, [taskDetail]);
@@ -141,7 +147,43 @@ const EditTaskModal = (props) => {
   };
 
   const handleChangeAssignees = (value) => {
-    console.log(value);
+    const assignees = formik.values.assignees;
+    const newAssignees = value;
+    let difference;
+
+    formik.setFieldValue("assignees", value);
+
+    // handle add assignee
+    if (assignees.length < newAssignees.length) {
+      difference = newAssignees.filter((x) => !assignees.includes(x));
+
+      const data = {
+        taskId: props.task.taskId,
+        userId: difference[0],
+      };
+
+      dispatch(
+        assignUserToTask(data, () =>
+          dispatch(fetchTaskDetail(props.task.taskId))
+        )
+      );
+    }
+
+    // handle remove assignee
+    if (assignees.length > newAssignees.length) {
+      difference = assignees.filter((x) => !newAssignees.includes(x));
+
+      const data = {
+        taskId: props.task.taskId,
+        userId: difference[0],
+      };
+
+      dispatch(
+        removeUserFromTask(data, () =>
+          dispatch(fetchTaskDetail(props.task.taskId))
+        )
+      );
+    }
   };
 
   const handleChangeStatus = (value) => {
@@ -329,7 +371,7 @@ const EditTaskModal = (props) => {
                       mode="multiple"
                       style={{ width: "100%" }}
                       placeholder="Choose assignees..."
-                      defaultValue={[]}
+                      value={formik.values.assignees}
                       onChange={handleChangeAssignees}
                       bordered={false}
                       className="hover:bg-gray-200 rounded"
@@ -353,7 +395,10 @@ const EditTaskModal = (props) => {
                     >
                       {projectDetail.members.map((member) => {
                         return (
-                          <Select.Option value={member.userId}>
+                          <Select.Option
+                            key={member.userId}
+                            value={member.userId}
+                          >
                             <div className="flex justify-start items-center">
                               <Avatar
                                 size="small"

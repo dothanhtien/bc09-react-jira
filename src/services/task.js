@@ -30,6 +30,14 @@ class TaskService {
   updatePriority(data) {
     return axiosClient.put("/api/Project/updatePriority", data);
   }
+
+  assignUserToTask(data) {
+    return axiosClient.post("/api/Project/assignUserTask", data);
+  }
+
+  removeUserFromTask(data) {
+    return axiosClient.post("/api/Project/removeUserFromTask", data);
+  }
 }
 
 export default TaskService;
