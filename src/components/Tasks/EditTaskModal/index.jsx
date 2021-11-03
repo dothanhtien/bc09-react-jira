@@ -20,7 +20,9 @@ import {
   fetchTaskDetail,
   updateDescription,
   updatePriority,
+  updateTaskStatus,
 } from "../../../store/actions/task";
+import { fetchProjectDetail } from "../../../store/actions/project";
 import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
 import { ReactComponent as HighPriorityIcon } from "../../../assets/images/icons/priorities/high.svg";
 import { ReactComponent as MediumPriorityIcon } from "../../../assets/images/icons/priorities/medium.svg";
@@ -140,6 +142,26 @@ const EditTaskModal = (props) => {
 
   const handleChangeAssignees = (value) => {
     console.log(value);
+  };
+
+  const handleChangeStatus = (value) => {
+    // reflect selected item in UI
+    formik.setFieldValue("statusId", value.toString());
+
+    const data = {
+      taskId: props.task.taskId,
+      statusId: value.toString(),
+    };
+
+    dispatch(
+      updateTaskStatus(data, () => {
+        // update Edit task modal
+        dispatch(fetchTaskDetail(props.task.taskId));
+
+        // update Manage tasks page
+        dispatch(fetchProjectDetail(props.task.projectId));
+      })
+    );
   };
 
   return (
@@ -262,13 +284,26 @@ const EditTaskModal = (props) => {
         <Col span={10}>
           <Form>
             <Form.Item className="mb-2 w-min">
-              <Select defaultValue={1} dropdownMatchSelectWidth={false}>
-                <Select.Option value={1}>BACKLOG</Select.Option>
-                <Select.Option value={2}>
+              <Select
+                value={formik.values.statusId}
+                dropdownMatchSelectWidth={false}
+                bordered={false}
+                optionLabelProp="label"
+                onChange={handleChangeStatus}
+                className="bg-gray-200 hover:bg-gray-300 rounded"
+              >
+                <Select.Option value="1" label="Back Log">
+                  BACKLOG
+                </Select.Option>
+                <Select.Option value="2" label="Selected For Development">
                   SELECTED FOR DEVELOPMENT
                 </Select.Option>
-                <Select.Option value={3}>IN PROGRESS</Select.Option>
-                <Select.Option value={4}>DONE</Select.Option>
+                <Select.Option value="3" label="In Progress">
+                  IN PROGRESS
+                </Select.Option>
+                <Select.Option value="4" label="Done">
+                  DONE
+                </Select.Option>
               </Select>
             </Form.Item>
           </Form>
