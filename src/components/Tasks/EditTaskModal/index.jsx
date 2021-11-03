@@ -17,11 +17,10 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  assignUserToTask,
   fetchTaskDetail,
-  removeUserFromTask,
   updateDescription,
   updatePriority,
+  updateTask,
   updateTaskStatus,
 } from "../../../store/actions/task";
 import { fetchProjectDetail } from "../../../store/actions/project";
@@ -43,7 +42,7 @@ const EditTaskModal = (props) => {
   const formik = useFormik({
     initialValues: {
       taskName: "",
-      assignees: [],
+      listUserAsign: [],
     },
   });
 
@@ -54,7 +53,7 @@ const EditTaskModal = (props) => {
   useEffect(() => {
     formik.setValues({
       ...taskDetail,
-      assignees: taskDetail
+      listUserAsign: taskDetail
         ? [...taskDetail.assigness.map((assignee) => assignee.id)]
         : [],
     });
@@ -147,43 +146,22 @@ const EditTaskModal = (props) => {
   };
 
   const handleChangeAssignees = (value) => {
-    const assignees = formik.values.assignees;
-    const newAssignees = value;
-    let difference;
+    formik.setFieldValue("listUserAsign", value);
 
-    formik.setFieldValue("assignees", value);
+    const data = {
+      ...formik.values,
+      listUserAsign: value,
+    };
 
-    // handle add assignee
-    if (assignees.length < newAssignees.length) {
-      difference = newAssignees.filter((x) => !assignees.includes(x));
+    dispatch(
+      updateTask(data, () => {
+        // update Edit task modal
+        dispatch(fetchTaskDetail(props.task.taskId));
 
-      const data = {
-        taskId: props.task.taskId,
-        userId: difference[0],
-      };
-
-      dispatch(
-        assignUserToTask(data, () =>
-          dispatch(fetchTaskDetail(props.task.taskId))
-        )
-      );
-    }
-
-    // handle remove assignee
-    if (assignees.length > newAssignees.length) {
-      difference = assignees.filter((x) => !newAssignees.includes(x));
-
-      const data = {
-        taskId: props.task.taskId,
-        userId: difference[0],
-      };
-
-      dispatch(
-        removeUserFromTask(data, () =>
-          dispatch(fetchTaskDetail(props.task.taskId))
-        )
-      );
-    }
+        // update Manage tasks page
+        dispatch(fetchProjectDetail(props.task.projectId));
+      })
+    );
   };
 
   const handleChangeStatus = (value) => {
@@ -371,7 +349,7 @@ const EditTaskModal = (props) => {
                       mode="multiple"
                       style={{ width: "100%" }}
                       placeholder="Choose assignees..."
-                      value={formik.values.assignees}
+                      value={formik.values.listUserAsign}
                       onChange={handleChangeAssignees}
                       bordered={false}
                       className="hover:bg-gray-200 rounded"

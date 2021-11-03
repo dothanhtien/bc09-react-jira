@@ -68,10 +68,14 @@ export const fetchTaskDetail = (taskId) => {
   };
 };
 
-export const updateTask = (data) => {
+export const updateTask = (data, callback) => {
   return async (dispatch) => {
     try {
       await taskService.updateTask(data);
+
+      if (callback) {
+        callback();
+      }
     } catch (err) {
       console.log(err);
     }
