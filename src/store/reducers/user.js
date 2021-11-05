@@ -13,9 +13,8 @@ const reducer = (state = initialState, { type, payload }) => {
     }
     case actionType.GET_PROJECT_MEMBERS:
       state.projectMembers = payload;
-      console.log(payload);
-      
       return { ...state };
+      
     default:
       return state;
   }

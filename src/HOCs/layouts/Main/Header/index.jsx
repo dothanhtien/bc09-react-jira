@@ -127,13 +127,12 @@ const Header = () => {
     </Menu>
   );
 
-  const handleCreateTask = () => {
+  const handleCreateTask = (propsRoute) => {
     let payload = {
-      component: <FormCreateTask />,
-      title: "Create Task",
+      component: <FormCreateTask propsRoute={propsRoute}/>,
+      title:"Create Task"
     };
     dispatch(createAction(actionType.OPEN_FORM_IN_DRAWER_POPUP, payload));
-  
   };
 
   return (

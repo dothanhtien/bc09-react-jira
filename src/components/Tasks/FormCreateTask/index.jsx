@@ -1,37 +1,23 @@
 import { Editor } from "@tinymce/tinymce-react";
 import { Input, Select, Slider } from "antd";
-import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
+import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { createAction } from "../../../store/actions";
 import { getPriority } from "../../../store/actions/priority";
 import { fetchAllProjects } from "../../../store/actions/project";
 import { getStatus } from "../../../store/actions/status";
-import { createTask, fetchAllTaskTypes } from "../../../store/actions/task";
+import { createTaskForm, fetchAllTaskTypes } from "../../../store/actions/task";
 import { actionType } from "../../../store/actions/type";
 import { getMembersByProjectId } from "../../../store/actions/user";
 import { ACCESS_TOKEN } from "../../../utils/constants/config";
 import "./index.css";
+import { createTaskSchema } from "../../../services/task";
+import { useHistory } from "react-router";
 
 const FormCreateTask = (props) => {
+  let history = useHistory();
   const dispatch = useDispatch();
-
-  const projectList = useSelector((state) => state.project.projectList);
-  const taskTypes = useSelector((state) => state.task.taskTypes);
-  const priority = useSelector((state) => state.priority.priority);
-  const projectMembers = useSelector((state) => state.user.projectMembers);
-  const statusTypes = useSelector((state) => state.status.statusTypes);
-
-  useEffect(() => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) dispatch(fetchAllProjects());
-    dispatch(fetchAllTaskTypes);
-    dispatch(getPriority);
-    dispatch(getStatus);
-    dispatch(getMembersByProjectId(projectList[0]?.id));
-    dispatch(createAction(actionType.SET_SUBMIT_FUNCTION, formik.handleSubmit));
-  }, [dispatch]);
-
   const editorRef = useRef(null);
   const log = () => {
     if (editorRef.current) {
@@ -48,7 +34,13 @@ const FormCreateTask = (props) => {
   let timeTrackingRemaining =
     timeTracking.totalEstimatedHours - timeTracking.timeTrackingSpent;
 
-  //155:
+
+  const projectList = useSelector((state) => state.project.projectList);
+  const taskTypes = useSelector((state) => state.task.taskTypes);
+  const priority = useSelector((state) => state.priority.priority);
+  const projectMembers = useSelector((state) => state.user.projectMembers);
+  const statusTypes = useSelector((state) => state.status.statusTypes);
+
   const formik = useFormik({
     enableReinitialize: true,
 
@@ -63,36 +55,63 @@ const FormCreateTask = (props) => {
       typeId: taskTypes[0]?.id,
       priorityId: priority[0]?.priorityId,
     },
+    validationSchema: createTaskSchema,
+    validateOnMount: true,
+
     onSubmit: (values) => {
+      console.log("values", values);
+
+      formik.setTouched({
+        taskName: true,
+        description: true,
+      });
+
+      if (!formik.isValid) return;
+
       let data = { ...values, timeTrackingRemaining: timeTrackingRemaining };
-      console.log(values);
-      console.log(data);
-      dispatch(createTask(data));
+      dispatch(createTaskForm(data));
+
+      formik.resetForm();
+///ko clear form dc
+
+      formik.setTouched({
+        taskName: false,
+        description: false,
+      });
+
+      history.push("/projects");
     },
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) dispatch(fetchAllProjects());
+    dispatch(fetchAllTaskTypes);
+    dispatch(getPriority);
+    dispatch(getStatus);
+    dispatch(getMembersByProjectId(projectList[0]?.id));
+    dispatch(createAction(actionType.SET_SUBMIT_FUNCTION, formik.handleSubmit));
+  }, [dispatch]);
+
+  
+  
 
   return (
     <form className="container" onSubmit={formik.handleSubmit}>
       <div className="w-full ">
         {/* tên project */}
-        <p>Project</p>
+        <p>Project </p>
         <select
           className="select"
           name="projectId"
           onChange={(e) => {
             let { value } = e.target;
-            formik.setFieldValue("listUserAsign", "");
             dispatch(getMembersByProjectId(value));
-            formik.setFieldValue("projectId", e.target.value);
+            formik.setFieldValue("projectId", value);
+            formik.setFieldValue("listUserAsign", []);
           }}
         >
-          {projectList.filter((item)=>{
-            let userinfo =[]
-            let loginInfojson = localStorage.getItem("loginInfo")
-            if(loginInfojson) userinfo = JSON.parse(loginInfojson)
-            
-            return item.creator.name===userinfo.name
-          }).map((project, i) => {
+          {projectList.map((project, i) => {
             return (
               <option key={i} value={project.id}>
                 {project.projectName}
@@ -100,6 +119,9 @@ const FormCreateTask = (props) => {
             );
           })}
         </select>
+        <span className="italic font-medium text-sm mt-2 ">
+          * You can only create tasks of your own projects!
+        </span>
       </div>
 
       {/* tên task */}
@@ -109,7 +131,11 @@ const FormCreateTask = (props) => {
           className="select"
           name="taskName"
           onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
+        {formik.touched.taskName && (
+          <p className="text-red-600"> {formik.errors.taskName}</p>
+        )}
       </div>
 
       {/* status */}
@@ -177,9 +203,12 @@ const FormCreateTask = (props) => {
           value={formik.values.listUserAsign}
           mode="multiple"
           size="midle"
-          options={projectMembers?.map((item, i) => {
-            return { value: item.userId, label: item.name };
-          })}
+          options={
+            projectMembers.length > 0 &&
+            projectMembers.map((item, i) => {
+              return { value: item.userId, label: item.name };
+            })
+          }
           optionFilterProp="label"
           onChange={(values) => {
             formik.setFieldValue("listUserAsign", values);
@@ -188,6 +217,7 @@ const FormCreateTask = (props) => {
         ></Select>
       </div>
 
+      {/* Time Tracking */}
       <div className="w-full mt-3">
         <p>Time Tracking</p>
         <div className="w-full flex justify-between ">
@@ -196,6 +226,7 @@ const FormCreateTask = (props) => {
             <input
               name="originalEstimate"
               type="number"
+              defaultValue="0"
               className="select"
               min="0"
               onChange={(e) => {
@@ -218,7 +249,6 @@ const FormCreateTask = (props) => {
               min="0"
               max={timeTracking.totalEstimatedHours}
               name="timeTrackingSpent"
-              //136:
               onChange={(e) => {
                 setTimeTracking({
                   ...timeTracking,
@@ -231,7 +261,7 @@ const FormCreateTask = (props) => {
           </div>
         </div>
         <div className="w-full">
-          {/* 135: thanh slider */}
+          {/*  thanh slider */}
           <Slider
             value={timeTracking.timeTrackingSpent}
             max={
@@ -257,6 +287,7 @@ const FormCreateTask = (props) => {
       <div>
         <p className="mt-3">Description</p>
         <Editor
+          onBlur={formik.handleBlur}
           onEditorChange={log}
           name="description"
           onInit={(evt, editor) => (editorRef.current = editor)}
@@ -278,6 +309,9 @@ const FormCreateTask = (props) => {
               "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
           }}
         />
+        {formik.touched.description && (
+          <p className="text-red-600">{formik.errors.description}</p>
+        )}
       </div>
     </form>
   );

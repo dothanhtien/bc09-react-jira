@@ -13,7 +13,7 @@ export default (state = inititalState, { type, payload }) => {
   switch (type) {
     
     case actionType.HIDE_DRAWER:
-      return { ...state, visible: false };
+      return { ...state, visible: false};
 
     case actionType.OPEN_FORM_IN_DRAWER_POPUP:
       return {
