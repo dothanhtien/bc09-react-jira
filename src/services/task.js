@@ -38,6 +38,10 @@ class TaskService {
   removeUserFromTask(data) {
     return axiosClient.post("/api/Project/removeUserFromTask", data);
   }
+
+  updateEstimate(data) {
+    return axiosClient.put("/api/Project/updateEstimate", data);
+  }
 }
 
 export default TaskService;

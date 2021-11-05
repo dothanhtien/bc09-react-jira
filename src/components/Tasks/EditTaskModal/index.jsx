@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTaskDetail,
   updateDescription,
+  updateEstimate,
   updatePriority,
   updateTask,
   updateTaskStatus,
@@ -33,16 +34,19 @@ import { ReactComponent as LowestPriorityIcon } from "../../../assets/images/ico
 const EditTaskModal = (props) => {
   const dispatch = useDispatch();
   const taskNameInputRef = useRef(null);
+  const estimateInputRef = useRef(null);
   const prevValues = useRef(null);
   const projectDetail = useSelector((state) => state.project.projectDetail);
   const taskDetail = useSelector((state) => state.task.taskDetail);
   const [showTaskNameInput, setShowTaskNameInput] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
+  const [showEstimateInput, setShowEstimateInput] = useState(false);
 
   const formik = useFormik({
     initialValues: {
       taskName: "",
       listUserAsign: [],
+      originalEstimate: 0,
     },
   });
 
@@ -180,6 +184,40 @@ const EditTaskModal = (props) => {
 
         // update Manage tasks page
         dispatch(fetchProjectDetail(props.task.projectId));
+      })
+    );
+  };
+
+  const handleClickEstimateValue = async () => {
+    prevValues.current = { ...formik.values };
+    await setShowEstimateInput(true);
+    await estimateInputRef.current.focus();
+  };
+
+  const handleCancelEditEstimate = () => {
+    formik.setFieldValue(
+      "originalEstimate",
+      prevValues.current.originalEstimate
+    );
+    setShowEstimateInput(false);
+  };
+
+  const handleKeyDownEstimateValue = (e) => {
+    // ESC button
+    if (e.keyCode === 27) {
+      handleCancelEditEstimate();
+    }
+  };
+
+  const handleSubmitEstimate = () => {
+    const data = {
+      taskId: props.task.taskId,
+      originalEstimate: formik.values.originalEstimate,
+    };
+
+    dispatch(
+      updateEstimate(data, () => {
+        setShowEstimateInput(false);
       })
     );
   };
@@ -328,128 +366,161 @@ const EditTaskModal = (props) => {
             </Form.Item>
           </Form>
 
-          <div>
-            <Collapse
-              defaultActiveKey={["1"]}
-              expandIconPosition="right"
-              className="mb-2"
+          <Collapse
+            defaultActiveKey={["1"]}
+            expandIconPosition="right"
+            className="mb-2"
+          >
+            <Collapse.Panel
+              header={<Typography.Text strong>Details</Typography.Text>}
+              key="1"
             >
-              <Collapse.Panel
-                header={<Typography.Text strong>Details</Typography.Text>}
-                key="1"
-              >
-                <Form layout="horizontal">
-                  <Form.Item
-                    label={<Typography.Text strong>Assignees</Typography.Text>}
-                    colon={false}
-                    labelCol={{ span: 8 }}
-                    labelAlign="left"
-                  >
-                    <Select
-                      mode="multiple"
-                      style={{ width: "100%" }}
-                      placeholder="Choose assignees..."
-                      value={formik.values.listUserAsign}
-                      onChange={handleChangeAssignees}
-                      bordered={false}
-                      className="hover:bg-gray-200 rounded"
-                      tagRender={(props) => {
-                        const onPreventMouseDown = (event) => {
-                          event.preventDefault();
-                          event.stopPropagation();
-                        };
+              <Form layout="horizontal">
+                <Form.Item
+                  label={<Typography.Text strong>Assignees</Typography.Text>}
+                  colon={false}
+                  labelCol={{ span: 8 }}
+                  labelAlign="left"
+                >
+                  <Select
+                    mode="multiple"
+                    style={{ width: "100%" }}
+                    placeholder="Choose assignees..."
+                    value={formik.values.listUserAsign}
+                    onChange={handleChangeAssignees}
+                    bordered={false}
+                    className="hover:bg-gray-200 rounded"
+                    tagRender={(props) => {
+                      const onPreventMouseDown = (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                      };
 
-                        return (
-                          <Tag
-                            closable
-                            onMouseDown={onPreventMouseDown}
-                            onClose={props.onClose}
-                            className="flex items-center py-1 my-0.5 rounded"
-                          >
-                            {props.label}
-                          </Tag>
-                        );
-                      }}
-                    >
-                      {projectDetail.members.map((member) => {
-                        return (
-                          <Select.Option
-                            key={member.userId}
-                            value={member.userId}
-                          >
-                            <div className="flex justify-start items-center">
-                              <Avatar
-                                size="small"
-                                className="mr-1"
-                                src={member.avatar}
-                              />
-                              <Typography.Text>{member.name}</Typography.Text>
-                            </div>
-                          </Select.Option>
-                        );
-                      })}
-                    </Select>
-                  </Form.Item>
-                </Form>
-                <Form layout="horizontal">
-                  <Form.Item
-                    label={<Typography.Text strong>Priority</Typography.Text>}
-                    colon={false}
-                    labelCol={{ span: 8 }}
-                    labelAlign="left"
-                    className="mb-0"
+                      return (
+                        <Tag
+                          closable
+                          onMouseDown={onPreventMouseDown}
+                          onClose={props.onClose}
+                          className="flex items-center py-1 my-0.5 rounded"
+                        >
+                          {props.label}
+                        </Tag>
+                      );
+                    }}
                   >
-                    <Select
-                      name="priorityId"
-                      value={formik.values.priorityId}
-                      onChange={handleChangePriorityId}
-                      showArrow={false}
-                      bordered={false}
-                      className="hover:bg-gray-200 rounded"
-                    >
-                      <Select.Option value={1}>
-                        <div className="flex justify-start items-center">
-                          <HighPriorityIcon className="mr-2" />
-                          <span>High</span>
-                        </div>
-                      </Select.Option>
-                      <Select.Option value={2}>
-                        <div className="flex justify-start items-center">
-                          <MediumPriorityIcon className="mr-2" />
-                          <span>Medium</span>
-                        </div>
-                      </Select.Option>
-                      <Select.Option value={3}>
-                        <div className="flex justify-start items-center">
-                          <LowPriorityIcon className="mr-2" />
-                          <span>Low</span>
-                        </div>
-                      </Select.Option>
-                      <Select.Option value={4}>
-                        <div className="flex justify-start items-center">
-                          <LowestPriorityIcon className="mr-2" />
-                          <span>Lowest</span>
-                        </div>
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Form>
-              </Collapse.Panel>
-            </Collapse>
+                    {projectDetail.members.map((member) => {
+                      return (
+                        <Select.Option
+                          key={member.userId}
+                          value={member.userId}
+                        >
+                          <div className="flex justify-start items-center">
+                            <Avatar
+                              size="small"
+                              className="mr-1"
+                              src={member.avatar}
+                            />
+                            <Typography.Text>{member.name}</Typography.Text>
+                          </div>
+                        </Select.Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Form>
+              <Form layout="horizontal">
+                <Form.Item
+                  label={<Typography.Text strong>Priority</Typography.Text>}
+                  colon={false}
+                  labelCol={{ span: 8 }}
+                  labelAlign="left"
+                >
+                  <Select
+                    name="priorityId"
+                    value={formik.values.priorityId}
+                    onChange={handleChangePriorityId}
+                    showArrow={false}
+                    bordered={false}
+                    className="hover:bg-gray-200 rounded"
+                  >
+                    <Select.Option value={1}>
+                      <div className="flex justify-start items-center">
+                        <HighPriorityIcon className="mr-2" />
+                        <span>High</span>
+                      </div>
+                    </Select.Option>
+                    <Select.Option value={2}>
+                      <div className="flex justify-start items-center">
+                        <MediumPriorityIcon className="mr-2" />
+                        <span>Medium</span>
+                      </div>
+                    </Select.Option>
+                    <Select.Option value={3}>
+                      <div className="flex justify-start items-center">
+                        <LowPriorityIcon className="mr-2" />
+                        <span>Low</span>
+                      </div>
+                    </Select.Option>
+                    <Select.Option value={4}>
+                      <div className="flex justify-start items-center">
+                        <LowestPriorityIcon className="mr-2" />
+                        <span>Lowest</span>
+                      </div>
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+              </Form>
 
-            <Collapse expandIconPosition="right">
-              <Collapse.Panel
-                header={<Typography.Text strong>More fields</Typography.Text>}
-                key="1"
-              >
-                <Typography.Text>
-                  A dog is a type of domesticated animal. Known for its loyalty
-                  and faithfulness, it can be found as a welcome guest in many
-                  households across the world.
-                </Typography.Text>
-              </Collapse.Panel>
-            </Collapse>
-          </div>
+              <Form layout="horizontal" onFinish={handleSubmitEstimate}>
+                <Form.Item
+                  label={<Typography.Text strong>Estimate</Typography.Text>}
+                  colon={false}
+                  labelCol={{ span: 8 }}
+                  labelAlign="left"
+                  className="relative"
+                >
+                  <div
+                    className={`${
+                      !showEstimateInput ? "block" : "hidden"
+                    } p-1 rounded hover:bg-gray-200 duration-300 border border-transparent hover:border-gray-200`}
+                    onClick={handleClickEstimateValue}
+                  >
+                    <Typography.Text className="bg-gray-200 px-1 rounded shadow">
+                      {formik.values.originalEstimate}
+                    </Typography.Text>
+                  </div>
+                  <Input
+                    name="originalEstimate"
+                    value={formik.values.originalEstimate}
+                    onChange={formik.handleChange}
+                    onKeyDown={handleKeyDownEstimateValue}
+                    className={`${
+                      showEstimateInput ? "block" : "hidden"
+                    } rounded px-2`}
+                    ref={estimateInputRef}
+                  />
+                  <div
+                    className={`absolute bottom-0 right-0 pt-1${
+                      showEstimateInput ? " block" : " hidden"
+                    }`}
+                    style={{ transform: "translateY(100%)" }}
+                  >
+                    <Button
+                      htmlType="submit"
+                      icon={<CheckOutlined className="text-xs" />}
+                      className="w-8 h-8 bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 hover:text-black focus:text-black border-0 shadow mr-1 p-0"
+                    />
+                    <Button
+                      htmlType="button"
+                      icon={<CloseOutlined className="text-xs" />}
+                      className="w-8 h-8 bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 hover:text-black focus:text-black border-0 shadow p-0"
+                      onClick={handleCancelEditEstimate}
+                    />
+                  </div>
+                </Form.Item>
+              </Form>
+            </Collapse.Panel>
+          </Collapse>
         </Col>
       </Row>
     </Modal>

@@ -137,3 +137,17 @@ export const removeUserFromTask = (data, callback) => {
     }
   };
 };
+
+export const updateEstimate = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      taskService.updateEstimate(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
