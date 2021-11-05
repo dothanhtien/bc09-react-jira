@@ -272,7 +272,7 @@ const EditTaskModal = (props) => {
 
             {showDescription && (
               <Form className="pl-1">
-                <Form.Item>
+                <Form.Item style={{ minHeight: 200 }}>
                   <TinyMCEEditor
                     name="description"
                     value={formik.values.description}
