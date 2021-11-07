@@ -46,6 +46,10 @@ class TaskService {
   updateTimeTracking(data) {
     return axiosClient.put("/api/Project/updateTimeTracking", data);
   }
+
+  removeTask(params) {
+    return axiosClient.delete("/api/Project/removeTask", { params });
+  }
 }
 
 export default TaskService;

@@ -169,3 +169,17 @@ export const updateTimeTracking = (data, callback) => {
     }
   };
 };
+
+export const removeTask = (params, callback) => {
+  return async () => {
+    try {
+      await taskService.removeTask(params);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};

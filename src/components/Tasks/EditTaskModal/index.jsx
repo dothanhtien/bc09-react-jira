@@ -11,13 +11,20 @@ import {
   Row,
   Select,
   Tag,
+  Tooltip,
   Typography,
 } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchAllTaskTypes,
   fetchTaskDetail,
+  removeTask,
   updateDescription,
   updateEstimate,
   updatePriority,
@@ -33,18 +40,23 @@ import { ReactComponent as LowestPriorityIcon } from "../../../assets/images/ico
 import TimeTrackingModal from "../TimeTrackingModal";
 import NewComment from "../../Comments/NewComment";
 import CommentItem from "../../Comments/CommentItem";
+import { ReactComponent as BugIcon } from "../../../assets/images/icons/bug.svg";
+import { ReactComponent as NewTaskIcon } from "../../../assets/images/icons/new_task.svg";
+import { ReactComponent as ExclamationIcon } from "../../../assets/images/icons/exclamation.svg";
 
 const EditTaskModal = (props) => {
   const dispatch = useDispatch();
   const taskNameInputRef = useRef(null);
   const estimateInputRef = useRef(null);
   const prevValues = useRef(null);
+  const taskTypes = useSelector((state) => state.task.taskTypes);
   const projectDetail = useSelector((state) => state.project.projectDetail);
   const taskDetail = useSelector((state) => state.task.taskDetail);
   const [showTaskNameInput, setShowTaskNameInput] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showEstimateInput, setShowEstimateInput] = useState(false);
   const [showTimeTrackingModal, setShowTimeTrackingModal] = useState(false);
+  const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -53,6 +65,10 @@ const EditTaskModal = (props) => {
       originalEstimate: 0,
     },
   });
+
+  useEffect(() => {
+    dispatch(fetchAllTaskTypes);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchTaskDetail(props.task.taskId));
@@ -148,7 +164,11 @@ const EditTaskModal = (props) => {
 
     dispatch(
       updatePriority(data, () => {
+        // update Edit task modal
         dispatch(fetchTaskDetail(props.task.taskId));
+
+        // update Manage tasks page
+        dispatch(fetchProjectDetail(props.task.projectId));
       })
     );
   };
@@ -230,14 +250,41 @@ const EditTaskModal = (props) => {
     setShowTimeTrackingModal(false);
   };
 
+  const handleChangeType = (value) => {
+    formik.setFieldValue("typeId", value);
+
+    const data = {
+      ...formik.values,
+      typeId: value,
+    };
+
+    dispatch(
+      updateTask(data, () => {
+        // update Edit task modal
+        dispatch(fetchTaskDetail(props.task.taskId));
+
+        // update Manage tasks page
+        dispatch(fetchProjectDetail(props.task.projectId));
+      })
+    );
+  };
+
+  const handleDeleteTask = () => {
+    dispatch(
+      removeTask({ taskId: props.task.taskId }, () =>
+        dispatch(
+          fetchProjectDetail(props.task.projectId, () => {
+            setShowDeleteTaskModal(false);
+            props.onCancel();
+          })
+        )
+      )
+    );
+  };
+
   return (
     <>
       <Modal
-        title={
-          <Typography.Title level={4} style={{ marginBottom: 0 }}>
-            Edit task
-          </Typography.Title>
-        }
         visible={props.visible}
         onCancel={props.onCancel}
         maskStyle={{ zIndex: 1050 }}
@@ -245,9 +292,73 @@ const EditTaskModal = (props) => {
         className="z-modal"
         width={980}
         maskClosable={false}
+        closable={false}
         footer={null}
         keyboard={false}
       >
+        <div className="flex justify-between items-center">
+          <div>
+            <Select
+              name="typeId"
+              value={formik.values.typeId}
+              onChange={handleChangeType}
+              bordered={false}
+              showArrow={false}
+              className="mb-1 hover:bg-gray-100 rounded hover:shadow"
+              optionLabelProp="label"
+              dropdownMatchSelectWidth={false}
+              style={{ marginLeft: "-8px" }}
+            >
+              {taskTypes.map((type) => {
+                return (
+                  <Select.Option
+                    key={type.id}
+                    value={type.id}
+                    label={
+                      <div className="h-full flex items-center">
+                        <Tooltip
+                          title={
+                            type.taskType.charAt(0).toUpperCase() +
+                            type.taskType.slice(1)
+                          }
+                          placement="bottom"
+                        >
+                          {type.id === 1 && <BugIcon />}
+                          {type.id === 2 && <NewTaskIcon />}
+                        </Tooltip>
+                      </div>
+                    }
+                  >
+                    <div className="flex justify-start items-center">
+                      {type.id === 1 && <BugIcon className="mr-1" />}
+                      {type.id === 2 && <NewTaskIcon className="mr-1" />}
+                      <span>
+                        {type.taskType.charAt(0).toUpperCase() +
+                          type.taskType.slice(1)}
+                      </span>
+                    </div>
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </div>
+
+          <div>
+            <Button
+              htmlType="button"
+              icon={<DeleteOutlined />}
+              className="w-8 h-8 hover:bg-gray-100 hover:text-black focus:text-black border-0 p-0 shadow-none hover:shadow rounded mr-1"
+              onClick={() => setShowDeleteTaskModal(true)}
+            />
+            <Button
+              htmlType="button"
+              icon={<CloseOutlined />}
+              className="w-8 h-8 hover:bg-gray-100 hover:text-black focus:text-black border-0 p-0 shadow-none hover:shadow rounded"
+              onClick={props.onCancel}
+            />
+          </div>
+        </div>
+
         <Row gutter={32}>
           <Col
             span={14}
@@ -588,6 +699,52 @@ const EditTaskModal = (props) => {
             </Collapse>
           </Col>
         </Row>
+      </Modal>
+
+      <Modal
+        visible={showDeleteTaskModal}
+        onCancel={() => setShowDeleteTaskModal(false)}
+        maskStyle={{ zIndex: 1050 }}
+        wrapClassName="z-modal"
+        className="z-modal"
+        footer={null}
+        closable={false}
+        width={400}
+      >
+        <Typography.Title level={4}>
+          <div className="flex items-center">
+            <ExclamationIcon
+              style={{ color: "#de350b", fill: "#ffffff" }}
+              className="mr-1"
+            />
+            <span> Delete this task?</span>
+          </div>
+        </Typography.Title>
+
+        <Typography.Text>
+          You're about to permanently delete this issue, its comments and
+          attachments, and all of its data.
+        </Typography.Text>
+        <Typography.Text>
+          If you're not sure, you can resolve or close this issue instead.
+        </Typography.Text>
+
+        <Form className="mt-4" onFinish={handleDeleteTask}>
+          <Form.Item className="mb-0 text-right">
+            <Button
+              htmlType="submit"
+              className="bg-red-600 hover:bg-red-500 focus:bg-red-600 text-white font-semibold hover:text-white focus:text-white border-red-600 hover:border-red-500 focus:border-red-600 rounded mr-1"
+            >
+              Delete
+            </Button>
+            <Button
+              className="hover:bg-gray-200 text-gray-700 hover:text-gray-700 font-semibold border-transparent hover:border-gray-200 rounded shadow-none"
+              onClick={() => setShowDeleteTaskModal(false)}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
 
       {taskDetail && (

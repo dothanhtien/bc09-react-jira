@@ -103,12 +103,16 @@ export const deleteProject = (projectId, callback) => {
   };
 };
 
-export const fetchProjectDetail = (projectId) => {
+export const fetchProjectDetail = (projectId, callback) => {
   return async (dispatch) => {
     try {
       const res = await projectService.fetchProjectDetail(projectId);
 
       dispatch(createAction(actionType.SET_PROJECT_DETAIL, res.data.content));
+
+      if (callback) {
+        callback();
+      }
     } catch (err) {
       console.log(err);
     }
