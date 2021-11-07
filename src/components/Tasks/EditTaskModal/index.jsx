@@ -31,6 +31,8 @@ import { ReactComponent as MediumPriorityIcon } from "../../../assets/images/ico
 import { ReactComponent as LowPriorityIcon } from "../../../assets/images/icons/priorities/low.svg";
 import { ReactComponent as LowestPriorityIcon } from "../../../assets/images/icons/priorities/lowest.svg";
 import TimeTrackingModal from "../TimeTrackingModal";
+import NewComment from "../../Comments/NewComment";
+import CommentItem from "../../Comments/CommentItem";
 
 const EditTaskModal = (props) => {
   const dispatch = useDispatch();
@@ -247,7 +249,11 @@ const EditTaskModal = (props) => {
         keyboard={false}
       >
         <Row gutter={32}>
-          <Col span={14}>
+          <Col
+            span={14}
+            className="overflow-x-hidden overscroll-y-auto"
+            style={{ maxHeight: "60vh" }}
+          >
             <div className="task-name-container relative">
               <Typography.Title
                 level={4}
@@ -296,7 +302,7 @@ const EditTaskModal = (props) => {
               </Form>
             </div>
 
-            <div className="description-container">
+            <div className="description-container mb-2">
               <Typography.Text strong className="pl-1">
                 Description
               </Typography.Text>
@@ -344,6 +350,26 @@ const EditTaskModal = (props) => {
                   </Form.Item>
                 </Form>
               )}
+            </div>
+
+            <div className="activities ml-1">
+              <Typography.Text strong>Comments</Typography.Text>
+
+              <NewComment taskId={props.task.taskId} />
+
+              <div className="comment-list">
+                {taskDetail?.lstComment
+                  .map((comment) => {
+                    return (
+                      <CommentItem
+                        key={comment.id}
+                        taskId={props.task.taskId}
+                        comment={comment}
+                      />
+                    );
+                  })
+                  .reverse()}
+              </div>
             </div>
           </Col>
 

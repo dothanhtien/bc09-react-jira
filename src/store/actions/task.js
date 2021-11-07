@@ -56,12 +56,16 @@ export const fetchAllTaskTypes = async (dispatch) => {
   }
 };
 
-export const fetchTaskDetail = (taskId) => {
+export const fetchTaskDetail = (taskId, callback) => {
   return async (dispatch) => {
     try {
       const res = await taskService.fetchTaskDetail(taskId);
 
       dispatch(createAction(actionType.SET_TASK_DETAIL, res.data.content));
+
+      if (callback) {
+        callback();
+      }
     } catch (err) {
       console.log(err);
     }
