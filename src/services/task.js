@@ -42,6 +42,10 @@ class TaskService {
   updateEstimate(data) {
     return axiosClient.put("/api/Project/updateEstimate", data);
   }
+
+  updateTimeTracking(data) {
+    return axiosClient.put("/api/Project/updateTimeTracking", data);
+  }
 }
 
 export default TaskService;

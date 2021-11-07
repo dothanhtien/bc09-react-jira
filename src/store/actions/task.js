@@ -151,3 +151,17 @@ export const updateEstimate = (data, callback) => {
     }
   };
 };
+
+export const updateTimeTracking = (data, callback) => {
+  return async (dispatch) => {
+    try {
+      taskService.updateTimeTracking(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
