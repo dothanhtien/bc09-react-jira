@@ -38,6 +38,7 @@ import { ReactComponent as MediumPriorityIcon } from "../../../assets/images/ico
 import { ReactComponent as LowPriorityIcon } from "../../../assets/images/icons/priorities/low.svg";
 import { ReactComponent as LowestPriorityIcon } from "../../../assets/images/icons/priorities/lowest.svg";
 import TimeTrackingModal from "../TimeTrackingModal";
+import TimeTrackingIndicator from "../TimeTrackingIndicator";
 import NewComment from "../../Comments/NewComment";
 import CommentItem from "../../Comments/CommentItem";
 import { ReactComponent as BugIcon } from "../../../assets/images/icons/bug.svg";
@@ -45,18 +46,19 @@ import { ReactComponent as NewTaskIcon } from "../../../assets/images/icons/new_
 import { ReactComponent as ExclamationIcon } from "../../../assets/images/icons/exclamation.svg";
 
 const EditTaskModal = (props) => {
+  const { projectId, taskId } = props.task;
   const dispatch = useDispatch();
-  const taskNameInputRef = useRef(null);
-  const estimateInputRef = useRef(null);
-  const prevValues = useRef(null);
   const taskTypes = useSelector((state) => state.task.taskTypes);
   const projectDetail = useSelector((state) => state.project.projectDetail);
   const taskDetail = useSelector((state) => state.task.taskDetail);
+  const prevValues = useRef(null);
+  const taskNameInputRef = useRef(null);
+  const estimateInputRef = useRef(null);
+  const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
   const [showTaskNameInput, setShowTaskNameInput] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showEstimateInput, setShowEstimateInput] = useState(false);
   const [showTimeTrackingModal, setShowTimeTrackingModal] = useState(false);
-  const [showDeleteTaskModal, setShowDeleteTaskModal] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -71,8 +73,8 @@ const EditTaskModal = (props) => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(fetchTaskDetail(props.task.taskId));
-  }, [dispatch, props.task.taskId]);
+    dispatch(fetchTaskDetail(taskId));
+  }, [dispatch, taskId]);
 
   useEffect(() => {
     formik.setValues({
@@ -83,6 +85,38 @@ const EditTaskModal = (props) => {
     });
     // eslint-disable-next-line
   }, [taskDetail]);
+
+  const handleChangeType = (value) => {
+    formik.setFieldValue("typeId", value);
+
+    const data = {
+      ...formik.values,
+      typeId: value,
+    };
+
+    dispatch(
+      updateTask(data, () => {
+        // update Edit task modal
+        dispatch(fetchTaskDetail(taskId));
+
+        // update Manage tasks page
+        dispatch(fetchProjectDetail(projectId));
+      })
+    );
+  };
+
+  const handleDeleteTask = () => {
+    dispatch(
+      removeTask({ taskId }, () =>
+        dispatch(
+          fetchProjectDetail(projectId, () => {
+            setShowDeleteTaskModal(false);
+            props.onCancel();
+          })
+        )
+      )
+    );
+  };
 
   const handleClickTaskNameLabel = async () => {
     prevValues.current = { ...formik.values };
@@ -107,10 +141,6 @@ const EditTaskModal = (props) => {
     }
   };
 
-  // const handleBlurTaskNameInput = () => {
-  //   setShowTaskNameInput(false);
-  // };
-
   const handleCancelEditTaskName = () => {
     formik.setFieldValue("taskName", prevValues.current.taskName);
     setShowTaskNameInput(false);
@@ -125,6 +155,20 @@ const EditTaskModal = (props) => {
     }
 
     // call api here
+    // replacement for api calling action (lỗi backend: không update được taskName)
+    Modal.warning({
+      title: "Opps! This feature is under construction",
+      content: "We're sorry for this inconvenience",
+      okText: "OK",
+      okButtonProps: {
+        className:
+          "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
+      },
+      zIndex: 1050,
+      onOk: () => {
+        formik.setFieldValue("taskName", prevValues.current.taskName);
+      },
+    });
   };
 
   const handleClickDescriptionLabel = () => {
@@ -144,13 +188,13 @@ const EditTaskModal = (props) => {
     }
 
     const data = {
-      taskId: formik.values.taskId,
+      taskId,
       description: formik.values.description,
     };
 
     dispatch(
       updateDescription(data, () => {
-        dispatch(fetchTaskDetail(props.task.taskId));
+        dispatch(fetchTaskDetail(taskId));
         setShowDescription(false);
       })
     );
@@ -158,17 +202,17 @@ const EditTaskModal = (props) => {
 
   const handleChangePriorityId = (value) => {
     const data = {
-      taskId: formik.values.taskId,
+      taskId,
       priorityId: value,
     };
 
     dispatch(
       updatePriority(data, () => {
         // update Edit task modal
-        dispatch(fetchTaskDetail(props.task.taskId));
+        dispatch(fetchTaskDetail(taskId));
 
         // update Manage tasks page
-        dispatch(fetchProjectDetail(props.task.projectId));
+        dispatch(fetchProjectDetail(projectId));
       })
     );
   };
@@ -184,10 +228,10 @@ const EditTaskModal = (props) => {
     dispatch(
       updateTask(data, () => {
         // update Edit task modal
-        dispatch(fetchTaskDetail(props.task.taskId));
+        dispatch(fetchTaskDetail(taskId));
 
         // update Manage tasks page
-        dispatch(fetchProjectDetail(props.task.projectId));
+        dispatch(fetchProjectDetail(projectId));
       })
     );
   };
@@ -197,17 +241,17 @@ const EditTaskModal = (props) => {
     formik.setFieldValue("statusId", value.toString());
 
     const data = {
-      taskId: props.task.taskId,
+      taskId,
       statusId: value.toString(),
     };
 
     dispatch(
       updateTaskStatus(data, () => {
         // update Edit task modal
-        dispatch(fetchTaskDetail(props.task.taskId));
+        dispatch(fetchTaskDetail(taskId));
 
         // update Manage tasks page
-        dispatch(fetchProjectDetail(props.task.projectId));
+        dispatch(fetchProjectDetail(projectId));
       })
     );
   };
@@ -235,7 +279,7 @@ const EditTaskModal = (props) => {
 
   const handleSubmitEstimate = () => {
     const data = {
-      taskId: props.task.taskId,
+      taskId,
       originalEstimate: formik.values.originalEstimate,
     };
 
@@ -248,38 +292,6 @@ const EditTaskModal = (props) => {
 
   const handleCancelEditTimeTracking = () => {
     setShowTimeTrackingModal(false);
-  };
-
-  const handleChangeType = (value) => {
-    formik.setFieldValue("typeId", value);
-
-    const data = {
-      ...formik.values,
-      typeId: value,
-    };
-
-    dispatch(
-      updateTask(data, () => {
-        // update Edit task modal
-        dispatch(fetchTaskDetail(props.task.taskId));
-
-        // update Manage tasks page
-        dispatch(fetchProjectDetail(props.task.projectId));
-      })
-    );
-  };
-
-  const handleDeleteTask = () => {
-    dispatch(
-      removeTask({ taskId: props.task.taskId }, () =>
-        dispatch(
-          fetchProjectDetail(props.task.projectId, () => {
-            setShowDeleteTaskModal(false);
-            props.onCancel();
-          })
-        )
-      )
-    );
   };
 
   return (
@@ -385,7 +397,6 @@ const EditTaskModal = (props) => {
                     name="taskName"
                     value={formik.values.taskName}
                     onChange={formik.handleChange}
-                    // onBlur={handleBlurTaskNameInput}
                     onKeyDown={handleKeyDownTaskNameInput}
                     className="text-xl font-semibold p-1 rounded resize-none"
                     style={{ lineHeight: 1.4 }}
@@ -466,7 +477,7 @@ const EditTaskModal = (props) => {
             <div className="activities ml-1">
               <Typography.Text strong>Comments</Typography.Text>
 
-              <NewComment taskId={props.task.taskId} />
+              <NewComment taskId={taskId} />
 
               <div className="comment-list">
                 {taskDetail?.lstComment
@@ -474,7 +485,7 @@ const EditTaskModal = (props) => {
                     return (
                       <CommentItem
                         key={comment.id}
-                        taskId={props.task.taskId}
+                        taskId={taskId}
                         comment={comment}
                       />
                     );
@@ -674,25 +685,15 @@ const EditTaskModal = (props) => {
                     className="p-1 rounded hover:bg-gray-200 duration-300 border border-transparent hover:border-gray-200"
                     onClick={() => setShowTimeTrackingModal(true)}
                   >
-                    <div className="h-1 flex bg-gray-300 rounded overflow-hidden cursor-pointer">
-                      <div
-                        className="h1 bg-blue-600"
-                        style={{
-                          width: `
-                          ${(
-                            (taskDetail?.timeTrackingSpent /
-                              taskDetail?.originalEstimate) *
-                            100
-                          ).toFixed()}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <div className="flex justify-between">
-                      <div>{taskDetail?.timeTrackingSpent}m logged</div>
-                      <div className="text-right">
-                        {taskDetail?.timeTrackingRemaining}m remaining
-                      </div>
-                    </div>
+                    <TimeTrackingIndicator
+                      timeTrackingSpent={taskDetail?.timeTrackingSpent}
+                      timeTrackingRemaining={taskDetail?.timeTrackingRemaining}
+                      spentWidth={(
+                        (taskDetail?.timeTrackingSpent /
+                          taskDetail?.originalEstimate) *
+                        100
+                      ).toFixed()}
+                    />
                   </Col>
                 </Row>
               </Collapse.Panel>

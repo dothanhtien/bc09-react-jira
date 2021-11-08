@@ -6,6 +6,7 @@ import {
   fetchTaskDetail,
   updateTimeTracking,
 } from "../../../store/actions/task";
+import TimeTrackingIndicator from "../TimeTrackingIndicator";
 
 const TimeTrackingModal = (props) => {
   const {
@@ -21,6 +22,7 @@ const TimeTrackingModal = (props) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       taskId,
       timeTrackingSpent: 0,
@@ -73,28 +75,19 @@ const TimeTrackingModal = (props) => {
       <Typography.Title level={4}>Time tracking</Typography.Title>
 
       <div className="mb-2">
-        <div className="h-2 flex bg-gray-300 rounded overflow-hidden cursor-pointer">
-          <div
-            className="bg-blue-600"
-            style={{
-              width: `${(
-                ((+timeTrackingSpentRef.current +
-                  +formik.values.timeTrackingSpent) /
-                  originalEstimate) *
-                100
-              ).toFixed()}%`,
-            }}
-          ></div>
-        </div>
-        <div className="flex justify-between">
-          <div className="text-left">
-            {+timeTrackingSpentRef.current + +formik.values.timeTrackingSpent}m
-            logged
-          </div>
-          <div className="text-right">
-            {+formik.values.timeTrackingRemaining}m remaining
-          </div>
-        </div>
+        <TimeTrackingIndicator
+          timeTrackingSpent={
+            +timeTrackingSpentRef.current + +formik.values.timeTrackingSpent
+          }
+          timeTrackingRemaining={formik.values.timeTrackingRemaining}
+          spentWidth={(
+            ((+timeTrackingSpentRef.current +
+              +formik.values.timeTrackingSpent) /
+              originalEstimate) *
+            100
+          ).toFixed()}
+          barHeight={8}
+        />
       </div>
 
       <Typography.Text className="block mb-2">
