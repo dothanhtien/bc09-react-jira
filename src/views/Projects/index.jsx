@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { fetchAllProjects, deleteProject } from "../../store/actions/project";
+import { createAction } from "../../store/actions";
+import { actionType } from "../../store/actions/type";
 
 const Projects = (props) => {
   const dispatch = useDispatch();
@@ -43,6 +45,17 @@ const Projects = (props) => {
       dispatch(fetchAllProjects(params));
     }, 400);
   };
+
+  const handleEditInfo =(record)=>{
+      let chosenProject ={
+        "id": record.id,
+        "projectName": record.projectName,
+        "creator": record.creator.id,
+        "description": record.description,
+        "categoryId":record.categoryId
+      }
+      dispatch(createAction(actionType.SET_PROJECT_EDIT_INFO, chosenProject))
+    }
 
   const showConfirmDeleteProjectModal = ({ projectName, id: projectId }) => {
     return () => {
@@ -91,7 +104,7 @@ const Projects = (props) => {
 
   return (
     <>
-      <div className="mt-6 mb-3 flex items-start">
+      <div className="mb-3 flex items-start">
         <Typography.Title level={3} className="flex-grow">
           Projects
         </Typography.Title>
@@ -171,7 +184,7 @@ const Projects = (props) => {
             const menu = (
               <Menu className="rounded">
                 <Menu.Item key="projectSettings">
-                  <Link to={`/projects/${record.id}/edit`}>
+                  <Link to={`/projects/${record.id}/edit`} onClick={()=>{handleEditInfo(record)}}>
                     Project settings
                   </Link>
                 </Menu.Item>

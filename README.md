@@ -4,7 +4,7 @@
 - Routing: react-router-dom
 - Store: redux, react-redux, redux-thunk
 - Form: formik, yup
-- Others: react-beautiful-dnd, sweetalert2
+- Others: react-beautiful-dnd, sweetalert2, html-react-parser
 
 ## Folder Structure
 ```

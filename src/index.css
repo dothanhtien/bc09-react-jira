@@ -21,3 +21,10 @@ code {
 .anticon {
   vertical-align: middle;
 }
+
+.custom-html-parser *:not([class^="antd"]) {
+  all: revert;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

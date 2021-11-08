@@ -1,0 +1,24 @@
+.menu {
+  min-width: 234px;
+  max-width: 800px;
+  border-radius: 3px;
+}
+
+.active {
+  position: relative;
+}
+
+.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  @apply bg-blue-700;
+}
+
+.menu-item {
+  margin-left: -8px;
+  margin-right: -8px;
+}

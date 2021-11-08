@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { ACCESS_TOKEN } from "./utils/constants/config";
 import { fetchMe } from "./store/actions/auth";
 import { AuthRoute, PrivateRoute } from "./HOCs/Route";
+import DrawerModalPopup from "./HOCs/DrawerModalPopup";
 
 // layouts
 import AuthLayout from "./HOCs/layouts/Auth";
@@ -20,6 +21,9 @@ import EditProject from "./views/Projects/Edit";
 
 import Tasks from "./views/Tasks";
 
+import UserManagment from "./views/Users/UserManagement";
+import EditUser from "./views/Users/EditUsers";
+
 const App = () => {
   const dispatch = useDispatch();
 
@@ -30,6 +34,8 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <DrawerModalPopup />
+
       <Switch>
         <Redirect exact from="/" to="/login" />
         <AuthRoute
@@ -77,6 +83,20 @@ const App = () => {
           path="/projects/:projectId/board"
           exact
           component={Tasks}
+          layout={MainLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/users"
+          exact
+          component={UserManagment}
+          layout={MainLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/users/:id/edit"
+          exact
+          component={EditUser}
           layout={MainLayout}
           redirectPath="/login"
         />

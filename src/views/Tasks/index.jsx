@@ -6,7 +6,6 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import Swal from "sweetalert2";
-import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import { createAction } from "../../store/actions";
 import { actionType } from "../../store/actions/type";
 import { fetchProjectDetail } from "../../store/actions/project";
@@ -15,7 +14,9 @@ import {
   fetchAllTaskTypes,
   updateTaskStatus,
 } from "../../store/actions/task";
+import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import TaskItem from "../../components/Tasks/TaskItem";
+import EditTaskModal from "../../components/Tasks/EditTaskModal";
 import { ReactComponent as NewTaskIcon } from "../../assets/images/icons/new_task.svg";
 import { ReactComponent as BugIcon } from "../../assets/images/icons/bug.svg";
 
@@ -26,6 +27,8 @@ const Tasks = (props) => {
   const taskError = useSelector((state) => state.task.error);
   const [clonedProjectDetail, setClonedProjectDetail] = useState(null);
   const [showNewTaskTextarea, setShowNewTaskTextarea] = useState(false);
+  const [showEditTaskModal, setShowEditTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const newTaskRef = useRef(null);
   const { projectId } = props.match.params;
 
@@ -162,9 +165,19 @@ const Tasks = (props) => {
     }
   };
 
+  const handleClickTaskItem = (taskItem) => () => {
+    setSelectedTask(taskItem);
+    setShowEditTaskModal(true);
+  };
+
+  const handleCancelEditTask = () => {
+    setSelectedTask(null);
+    setShowEditTaskModal(false);
+  };
+
   return (
     <>
-      <Breadcrumb className="mt-6">
+      <Breadcrumb>
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>
@@ -202,6 +215,9 @@ const Tasks = (props) => {
                                   key={listTaskDetailItem.taskId}
                                   listTaskDetailItem={listTaskDetailItem}
                                   index={index}
+                                  onClick={handleClickTaskItem(
+                                    listTaskDetailItem
+                                  )}
                                 />
                               );
                             }
@@ -322,6 +338,14 @@ const Tasks = (props) => {
           })}
         </DragDropContext>
       </Row>
+
+      {selectedTask && (
+        <EditTaskModal
+          visible={showEditTaskModal}
+          onCancel={handleCancelEditTask}
+          task={selectedTask}
+        />
+      )}
     </>
   );
 };

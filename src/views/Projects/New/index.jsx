@@ -80,7 +80,7 @@ const NewProject = (props) => {
 
   return (
     <div style={{ maxWidth: 980 }} className="mx-auto">
-      <Breadcrumb className="mt-6">
+      <Breadcrumb>
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>

@@ -1,14 +1,19 @@
 import React from "react";
 import { Avatar, Button, Menu, Dropdown, Divider, Tooltip } from "antd";
-import { DownOutlined, PlusOutlined, SettingFilled } from "@ant-design/icons";
+import { DownOutlined, SettingFilled } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
 import { ReactComponent as JiraLogo } from "../../../../assets/images/logos/jira_logo.svg";
 import { ReactComponent as JiraTextLogo } from "../../../../assets/images/logos/jira_text_logo.svg";
 import classes from "./header.module.css";
 import { ACCESS_TOKEN } from "../../../../utils/constants/config";
+import { useDispatch } from "react-redux";
+import { createAction } from "../../../../store/actions";
+import { actionType } from "../../../../store/actions/type";
+import FormCreateTask from "../../../../components/Tasks/FormCreateTask";
 
 const Header = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN);
@@ -17,12 +22,23 @@ const Header = () => {
 
   const projectsMenu = (
     <Menu className={classes.menu}>
-      <Menu.Item key="project" className="h-10 py-2 px-5">
+      <Menu.Item key="projects" className="h-10 py-2 px-5">
         <Link to="/projects">View all projects</Link>
       </Menu.Item>
       <Menu.Item key="newProject" className="h-10 py-2 px-5">
         <Link to="/projects/new">Create project</Link>
       </Menu.Item>
+    </Menu>
+  );
+
+  const usersMenu = (
+    <Menu className={classes.menu}>
+      <Menu.Item key="users" className="h-10 py-2 px-5">
+        <Link to="/users">View all users</Link>
+      </Menu.Item>
+      {/* <Menu.Item key="newUser" className="h-10 py-2 px-5">
+        <Link to="/users/new">Create user</Link>
+      </Menu.Item> */}
     </Menu>
   );
 
@@ -39,7 +55,7 @@ const Header = () => {
           key="personalSettings"
           className={`${classes["menu-item"]} h-10 py-2 px-5`}
         >
-          <Link to="/projects">User management</Link>
+          <Link to="/users">User management</Link>
         </Menu.Item>
       </Menu.ItemGroup>
 
@@ -56,12 +72,6 @@ const Header = () => {
         >
           <Link to="/projects">Projects</Link>
         </Menu.Item>
-        <Menu.Item
-          key="accountSettings"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/projects">Issues</Link>
-        </Menu.Item>
       </Menu.ItemGroup>
     </Menu>
   );
@@ -71,36 +81,15 @@ const Header = () => {
       <Menu.ItemGroup
         title={
           <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
-            Jira
-          </span>
-        }
-      >
-        <Menu.Item
-          key="personalSettings"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/projects">Personal settings</Link>
-        </Menu.Item>
-      </Menu.ItemGroup>
-      <Menu.ItemGroup
-        title={
-          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
             Đỗ Thành Tiến
           </span>
         }
-        className="Test"
       >
         <Menu.Item
           key="profile"
           className={`${classes["menu-item"]} h-10 py-2 px-5`}
         >
           <Link to="/projects">Profiles</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="accountSettings"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/projects">Account settings</Link>
         </Menu.Item>
       </Menu.ItemGroup>
 
@@ -113,6 +102,14 @@ const Header = () => {
       </Menu.Item>
     </Menu>
   );
+
+  const handleCreateTask = (propsRoute) => {
+    let payload = {
+      component: <FormCreateTask propsRoute={propsRoute} />,
+      title: "Create Task",
+    };
+    dispatch(createAction(actionType.OPEN_FORM_IN_DRAWER_POPUP, payload));
+  };
 
   return (
     <>
@@ -145,10 +142,26 @@ const Header = () => {
                 </button>
               </Dropdown>
             </div>
-            <button className="flex justify-center items-center h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white font-medium py-1.5 px-3 rounded cursor-pointer">
-              <PlusOutlined className="block sm:hidden align-middle text-white" />
-              <span className="hidden sm:block">Create</span>
-            </button>
+            <div
+              className={`h-full flex items-center mr-1${
+                history.location.pathname.includes("/users")
+                  ? " " + classes.active
+                  : ""
+              }`}
+            >
+              <Dropdown overlay={usersMenu} trigger={["click"]}>
+                <button className="text-blue-700 h-8 font-medium py-1.5 px-2 hover:bg-blue-200 focus:bg-blue-200 rounded">
+                  Users <DownOutlined />
+                </button>
+              </Dropdown>
+            </div>
+
+            <Button
+              className="text-blue-700 hover:text-blue-700 focus:text-blue-700 h-8 font-medium py-1.5 px-2 hover:bg-blue-200 focus:bg-blue-200 rounded border-0"
+              onClick={handleCreateTask}
+            >
+              Create Task
+            </Button>
           </nav>
           <div className="flex items-center">
             <Dropdown
