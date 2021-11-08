@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, Button, Menu, Dropdown, Divider, Tooltip } from "antd";
-import { DownOutlined, PlusOutlined, SettingFilled } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
 import { ReactComponent as JiraLogo } from "../../../../assets/images/logos/jira_logo.svg";
 import { ReactComponent as JiraTextLogo } from "../../../../assets/images/logos/jira_text_logo.svg";
@@ -15,14 +15,14 @@ const Header = () => {
     history.push("/login");
   };
 
-  
   const projectsMenu = (
     <Menu className={classes.menu}>
-      
-      <Menu.Item key="project" className=" py-2 px-5 text-blue-700 h-8 font-medium">
+      <Menu.Item
+        key="project"
+        className=" py-2 px-5 text-blue-700 h-8 font-medium"
+      >
         <Link to="/projects">Projects</Link>
       </Menu.Item>
-
     </Menu>
   );
 

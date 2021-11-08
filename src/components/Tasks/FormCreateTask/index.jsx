@@ -1,5 +1,5 @@
 import { Editor } from "@tinymce/tinymce-react";
-import { Input, Select, Slider } from "antd";
+import { Select, Slider } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
@@ -59,8 +59,6 @@ const FormCreateTask = (props) => {
     validateOnMount: true,
 
     onSubmit: (values) => {
-      console.log("values", values);
-
       formik.setTouched({
         taskName: true,
         description: true,
@@ -90,9 +88,12 @@ const FormCreateTask = (props) => {
     dispatch(fetchAllTaskTypes);
     dispatch(getPriority);
     dispatch(getStatus);
-    dispatch(getMembersByProjectId(projectList[0]?.id));
     dispatch(createAction(actionType.SET_SUBMIT_FUNCTION, formik.handleSubmit));
-  }, [dispatch]);
+  }, [dispatch, formik.handleSubmit]);
+
+  useEffect(() => {
+    dispatch(getMembersByProjectId(projectList[0]?.id));
+  }, [dispatch, projectList]);
 
   return (
     <form className="container" onSubmit={formik.handleSubmit}>
@@ -206,7 +207,6 @@ const FormCreateTask = (props) => {
           value={formik.values.listUserAsign}
           mode="multiple"
           size="midle"
-          value={formik.values.listUserAsign}
           options={
             projectMembers.length > 0 &&
             projectMembers.map((item, i) => {
@@ -254,7 +254,6 @@ const FormCreateTask = (props) => {
               value={formik.values.timeTrackingSpent}
               min="0"
               max={timeTracking.totalEstimatedHours}
-              name="timeTrackingSpent"
               onChange={(e) => {
                 setTimeTracking({
                   ...timeTracking,
@@ -267,13 +266,10 @@ const FormCreateTask = (props) => {
             />
           </div>
         </div>
-          {/*  slider bar area*/}
+        {/*  slider bar area*/}
         <div className="w-full">
           <Slider
-            value={
-              sliderMode ? timeTracking.timeTrackingSpent : 0
-            }
-            
+            value={sliderMode ? timeTracking.timeTrackingSpent : 0}
             max={
               Number(timeTrackingRemaining) +
               Number(timeTracking.timeTrackingSpent)

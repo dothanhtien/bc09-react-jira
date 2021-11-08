@@ -1,15 +1,17 @@
-import { actionType } from "../actions/type"
+import { actionType } from "../actions/type";
 
 const intitialValue = {
-    statusTypes: []
-}
+  statusTypes: [],
+};
 
-export default (state=intitialValue, {type, payload})=>{
-    switch (type){
-        case (actionType.GET_STATUS):
-            state = {...state, statusTypes: payload}
-        
-        default:
-            return state
-    }
-}
+const reducer = (state = intitialValue, { type, payload }) => {
+  switch (type) {
+    case actionType.GET_STATUS:
+      state.statusTypes = payload;
+      return { ...state };
+    default:
+      return state;
+  }
+};
+
+export default reducer;

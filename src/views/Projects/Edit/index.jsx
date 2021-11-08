@@ -1,51 +1,54 @@
 import React, { useEffect } from "react";
 import { Breadcrumb, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProjectCategories, updateProject } from "../../../store/actions/project";
+import {
+  fetchAllProjectCategories,
+  updateProject,
+} from "../../../store/actions/project";
 import { Form, Input, Button, Select } from "antd";
 import { Link } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import { useFormik } from "formik";
 import { createProjectSchema } from "../../../services/project";
 
-
 const EditProject = (props) => {
-
   const dispatch = useDispatch();
 
   const projectInfo = useSelector((state) => state.project.projectEditInfo);
-  
+
   const projectCategories = useSelector(
     (state) => state.project.projectCategories
   );
   const serverError = useSelector((state) => state.project.error);
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       projectName: "",
       description: "",
       id: 0,
-      creator:0,
-      categoryId: ""
+      creator: 0,
+      categoryId: "",
     },
     validationSchema: createProjectSchema,
     validateOnMount: true,
-  
     initialErrors: {
       projectName: "",
       description: "",
       id: 0,
-      creator:0,
-      categoryId: ""
+      creator: 0,
+      categoryId: "",
     },
   });
 
   useEffect(() => {
     dispatch(fetchAllProjectCategories);
-
-    { projectInfo && formik.setValues(projectInfo)}
-
   }, [dispatch]);
+
+  useEffect(() => {
+    formik.setValues(projectInfo);
+    // eslint-disable-next-line
+  }, [dispatch, projectInfo]);
 
   useEffect(() => {
     if (serverError === "Project name already exists") {
@@ -70,8 +73,8 @@ const EditProject = (props) => {
     if (!formik.isValid) return;
 
     dispatch(
-      updateProject( formik.values, () => {
-        props.history.push("/projects")
+      updateProject(formik.values, () => {
+        props.history.push("/projects");
       })
     );
   };
@@ -86,7 +89,7 @@ const EditProject = (props) => {
 
       <Typography.Title level={3}>Update project</Typography.Title>
 
-        <Form layout="vertical" onFinish={handleUpdateProject}>
+      <Form layout="vertical" onFinish={handleUpdateProject}>
         <Form.Item
           label={
             <>
@@ -94,7 +97,7 @@ const EditProject = (props) => {
             </>
           }
         >
-          <Input disabled value={formik.values.id}/>
+          <Input disabled value={formik.values.id} />
         </Form.Item>
         <Form.Item
           label={
@@ -110,19 +113,15 @@ const EditProject = (props) => {
           }
         >
           <Input
-          name="projectName"
-          value={formik.values.projectName}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+            name="projectName"
+            value={formik.values.projectName}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
         </Form.Item>
 
         <Form.Item
-          label={
-            <>
-              Project category 
-            </>
-          }
+          label={<>Project category</>}
           help={formik.touched.categoryId && formik.errors.categoryId}
           validateStatus={
             formik.touched.categoryId && !!formik.errors.categoryId
@@ -138,13 +137,13 @@ const EditProject = (props) => {
             value={formik.values.categoryId}
             onChange={(value) => formik.setFieldValue("categoryId", value)}
           >
-          {projectCategories.map(({id, projectCategoryName}, i) => {
-            return (
-              <Select.Option key={i} value={id}>
-                {projectCategoryName}
-              </Select.Option>
-            );
-          })}
+            {projectCategories.map(({ id, projectCategoryName }, i) => {
+              return (
+                <Select.Option key={i} value={id}>
+                  {projectCategoryName}
+                </Select.Option>
+              );
+            })}
           </Select>
         </Form.Item>
 
@@ -191,7 +190,6 @@ const EditProject = (props) => {
           </Button>
         </div>
       </Form>
-  
     </div>
   );
 };

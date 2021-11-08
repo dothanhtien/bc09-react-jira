@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { DownOutlined, PlusOutlined, SettingFilled } from "@ant-design/icons";
+import { DownOutlined, SettingFilled } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
 import { ReactComponent as JiraLogo } from "../../../../assets/images/logos/jira_logo.svg";
 import { ReactComponent as JiraTextLogo } from "../../../../assets/images/logos/jira_text_logo.svg";
@@ -129,8 +129,8 @@ const Header = () => {
 
   const handleCreateTask = (propsRoute) => {
     let payload = {
-      component: <FormCreateTask propsRoute={propsRoute}/>,
-      title:"Create Task"
+      component: <FormCreateTask propsRoute={propsRoute} />,
+      title: "Create Task",
     };
     dispatch(createAction(actionType.OPEN_FORM_IN_DRAWER_POPUP, payload));
   };

@@ -6,7 +6,7 @@ import {
   DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Popconfirm, message } from "antd";
+import { Popconfirm } from "antd";
 import { Link } from "react-router-dom";
 import { deleteUser, fetchAllUsers } from "../../../store/actions/user";
 
@@ -22,6 +22,8 @@ const UserManagment = (props) => {
     searchText: "",
     searchedColumn: "",
   });
+
+  console.log(searchState);
 
   let userList = useSelector((state) => state.user.userList);
 
@@ -178,7 +180,10 @@ const UserManagment = (props) => {
       render: (text, record, index) => (
         <Space size="small">
           {/* edit button */}
-          <Link to={`/users/${record.userId}/edit`} className="text-blue-500 rounded  p-2 ">
+          <Link
+            to={`/users/${record.userId}/edit`}
+            className="text-blue-500 rounded  p-2 "
+          >
             <EditOutlined />
           </Link>
 
@@ -191,7 +196,7 @@ const UserManagment = (props) => {
             okText="Yes"
             cancelText="No"
           >
-            <a className="ml-0 text-red-400 rounded  p-2 ">
+            <a href=" " className="ml-0 text-red-400 rounded  p-2 ">
               <DeleteOutlined />
             </a>
           </Popconfirm>
