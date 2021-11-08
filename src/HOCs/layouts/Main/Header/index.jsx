@@ -1,14 +1,27 @@
 import React from "react";
-import { Avatar, Button, Menu, Dropdown, Divider, Tooltip } from "antd";
+import {
+  Avatar,
+  Button,
+  Menu,
+  Dropdown,
+  Divider,
+  Tooltip,
+  Typography,
+} from "antd";
 import { DownOutlined, PlusOutlined, SettingFilled } from "@ant-design/icons";
 import { Link, useHistory } from "react-router-dom";
 import { ReactComponent as JiraLogo } from "../../../../assets/images/logos/jira_logo.svg";
 import { ReactComponent as JiraTextLogo } from "../../../../assets/images/logos/jira_text_logo.svg";
 import classes from "./header.module.css";
 import { ACCESS_TOKEN } from "../../../../utils/constants/config";
+import { useDispatch } from "react-redux";
+import { createAction } from "../../../../store/actions";
+import { actionType } from "../../../../store/actions/type";
+import FormCreateTask from "../../../../components/Tasks/FormCreateTask";
 
 const Header = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN);
@@ -114,6 +127,14 @@ const Header = () => {
     </Menu>
   );
 
+  const handleCreateTask = (propsRoute) => {
+    let payload = {
+      component: <FormCreateTask propsRoute={propsRoute}/>,
+      title:"Create Task"
+    };
+    dispatch(createAction(actionType.OPEN_FORM_IN_DRAWER_POPUP, payload));
+  };
+
   return (
     <>
       <header className="h-14 bg-white shadow px-4 fixed left-0 top-0 w-full z-header">
@@ -145,10 +166,12 @@ const Header = () => {
                 </button>
               </Dropdown>
             </div>
-            <button className="flex justify-center items-center h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white font-medium py-1.5 px-3 rounded cursor-pointer">
-              <PlusOutlined className="block sm:hidden align-middle text-white" />
-              <span className="hidden sm:block">Create</span>
-            </button>
+            <Typography
+              className="text-blue-700 h-8 font-medium py-1.5 px-2 hover:text-blue-400 focus:text-blue-400 cursor-pointer"
+              onClick={handleCreateTask}
+            >
+              Create Task
+            </Typography>
           </nav>
           <div className="flex items-center">
             <Dropdown

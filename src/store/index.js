@@ -6,8 +6,11 @@ import authReducer from "./reducers/authReducer";
 import user from "./reducers/user";
 import project from "./reducers/project";
 import task from "./reducers/task";
+import drawerModal from "./reducers/drawerModal";
+import priority from "./reducers/priority";
+import status from "./reducers/status";
 
-const reducer = combineReducers({ authReducer, user, project, task });
+const reducer = combineReducers({ authReducer, user, project, task, drawerModal, priority, status});
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 

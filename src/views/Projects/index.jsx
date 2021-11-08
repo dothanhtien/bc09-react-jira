@@ -171,7 +171,7 @@ const Projects = (props) => {
             const menu = (
               <Menu className="rounded">
                 <Menu.Item key="projectSettings">
-                  <Link to={`/projects/${record.id}/edit`} onClick={()=>handleEditInfo(record)}>
+                  <Link to={`/projects/${record.id}/edit`} onClick={()=>{console.log(record);handleEditInfo(record)}}>
                     Project settings
                   </Link>
                 </Menu.Item>

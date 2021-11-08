@@ -32,3 +32,19 @@ export const deleteUser = (id)=>{
     }
   }
 }
+
+export const getMembersByProjectId = (id)=>{
+  return async(dispatch)=>{
+    try{
+      const res = await userService.getMembersByProjectId(id)
+      console.log(res.data.content);
+
+        dispatch(createAction(actionType.GET_PROJECT_MEMBERS, res.data.content))
+     
+
+    }catch(err){ 
+      dispatch(createAction(actionType.GET_PROJECT_MEMBERS, []))
+      console.log({...err});
+    }
+  }
+}

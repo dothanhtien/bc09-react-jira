@@ -1,0 +1,9 @@
+.select{
+    border: 2px solid rgba(210, 205, 205, 0.779);
+    width: 100%;
+    border-radius: 2px;
+    padding: 8px;
+}
+.input{
+    padding:6px
+}

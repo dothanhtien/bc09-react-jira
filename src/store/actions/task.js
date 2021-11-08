@@ -1,6 +1,7 @@
 import { taskService } from "../../services";
 import { createAction } from ".";
 import { actionType } from "./type";
+import { notifitying } from "../../utils/notification";
 
 export const updateTaskStatus = ({ taskId, statusId }, callback) => {
   return async (dispatch) => {
@@ -26,8 +27,12 @@ export const createTask = (data, callback) => {
       if (callback) {
         callback();
       }
+
+      notifitying("success", "Task successfully created");
+      dispatch(createAction(actionType.HIDE_DRAWER));
     } catch (err) {
       console.log(err);
+
       if (
         err.response.data.statusCode === 500 &&
         err.response.data.content === "task already exists!"
@@ -54,6 +59,23 @@ export const fetchAllTaskTypes = async (dispatch) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+export const createTaskForm = (data) => {
+  return async (dispatch) => {
+    try {
+      const res = await taskService.createTask(data);
+
+      console.log(res.data);
+
+      notifitying("success", "Task successfully created");
+      dispatch(createAction(actionType.HIDE_DRAWER));
+    } catch (err) {
+      console.log({ ...err });
+      notifitying("warning", "Task failed to be created");
+      dispatch(createAction(actionType.HIDE_DRAWER));
+    }
+  };
 };
 
 export const fetchTaskDetail = (taskId, callback) => {
