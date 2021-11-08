@@ -81,10 +81,11 @@ const EditProject = (props) => {
 
   return (
     <div style={{ maxWidth: 980 }} className="mx-auto">
-      <Breadcrumb className="mt-6">
+      <Breadcrumb>
         <Breadcrumb.Item>
-          <Link to="/projects">Projects/</Link>
+          <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>
+        <Breadcrumb.Item>Project settings</Breadcrumb.Item>
       </Breadcrumb>
 
       <Typography.Title level={3}>Update project</Typography.Title>
