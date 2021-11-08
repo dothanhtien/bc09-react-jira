@@ -91,7 +91,7 @@ const Projects = (props) => {
 
   return (
     <>
-      <div className="mt-6 mb-3 flex items-start">
+      <div className="mb-3 flex items-start">
         <Typography.Title level={3} className="flex-grow">
           Projects
         </Typography.Title>

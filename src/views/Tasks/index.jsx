@@ -177,7 +177,7 @@ const Tasks = (props) => {
 
   return (
     <>
-      <Breadcrumb className="mt-6">
+      <Breadcrumb>
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>
