@@ -18,6 +18,7 @@ import { useHistory } from "react-router";
 const FormCreateTask = (props) => {
   let history = useHistory();
   const dispatch = useDispatch();
+  const [sliderMode, setSliderMode] = useState(true);
   const editorRef = useRef(null);
   const log = () => {
     if (editorRef.current) {
@@ -33,7 +34,6 @@ const FormCreateTask = (props) => {
 
   let timeTrackingRemaining =
     timeTracking.totalEstimatedHours - timeTracking.timeTrackingSpent;
-
 
   const projectList = useSelector((state) => state.project.projectList);
   const taskTypes = useSelector((state) => state.task.taskTypes);
@@ -71,8 +71,9 @@ const FormCreateTask = (props) => {
       let data = { ...values, timeTrackingRemaining: timeTrackingRemaining };
       dispatch(createTaskForm(data));
 
+      setSliderMode(false);
+
       formik.resetForm();
-///ko clear form dc
 
       formik.setTouched({
         taskName: false,
@@ -93,9 +94,6 @@ const FormCreateTask = (props) => {
     dispatch(createAction(actionType.SET_SUBMIT_FUNCTION, formik.handleSubmit));
   }, [dispatch]);
 
-  
-  
-
   return (
     <form className="container" onSubmit={formik.handleSubmit}>
       <div className="w-full ">
@@ -104,6 +102,7 @@ const FormCreateTask = (props) => {
         <select
           className="select"
           name="projectId"
+          value={formik.values.projectId}
           onChange={(e) => {
             let { value } = e.target;
             dispatch(getMembersByProjectId(value));
@@ -132,6 +131,7 @@ const FormCreateTask = (props) => {
           name="taskName"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
+          value={formik.values.taskName}
         />
         {formik.touched.taskName && (
           <p className="text-red-600"> {formik.errors.taskName}</p>
@@ -143,6 +143,7 @@ const FormCreateTask = (props) => {
         <p>Status </p>
         <select
           className="select"
+          value={formik.values.statusId}
           name="statusId"
           onChange={formik.handleChange}
           style={{ width: "100%" }}
@@ -164,6 +165,7 @@ const FormCreateTask = (props) => {
           <select
             className="select"
             name="priorityId"
+            value={formik.values.priorityId}
             onChange={(value) => {
               formik.setFieldValue("priorityId", value);
             }}
@@ -183,6 +185,7 @@ const FormCreateTask = (props) => {
             className="select"
             name="typeId"
             onChange={formik.handleChange}
+            value={formik.values.typeId}
           >
             {taskTypes?.map((item, i) => {
               return (
@@ -203,6 +206,7 @@ const FormCreateTask = (props) => {
           value={formik.values.listUserAsign}
           mode="multiple"
           size="midle"
+          value={formik.values.listUserAsign}
           options={
             projectMembers.length > 0 &&
             projectMembers.map((item, i) => {
@@ -229,6 +233,7 @@ const FormCreateTask = (props) => {
               defaultValue="0"
               className="select"
               min="0"
+              value={formik.values.originalEstimate}
               onChange={(e) => {
                 setTimeTracking({
                   ...timeTracking,
@@ -246,6 +251,7 @@ const FormCreateTask = (props) => {
               className="select input"
               type="number"
               defaultValue="0"
+              value={formik.values.timeTrackingSpent}
               min="0"
               max={timeTracking.totalEstimatedHours}
               name="timeTrackingSpent"
@@ -256,28 +262,31 @@ const FormCreateTask = (props) => {
                 });
 
                 formik.setFieldValue("timeTrackingSpent", +e.target.value);
+                setSliderMode(true);
               }}
             />
           </div>
         </div>
+          {/*  slider bar area*/}
         <div className="w-full">
-          {/*  thanh slider */}
           <Slider
-            value={timeTracking.timeTrackingSpent}
+            value={
+              sliderMode ? timeTracking.timeTrackingSpent : 0
+            }
+            
             max={
               Number(timeTrackingRemaining) +
               Number(timeTracking.timeTrackingSpent)
             }
-            // tooltipVisible //cái cục trên thanh slider
             className="mt-5"
           />
 
           <div className="flex justify-between">
             <div className="text-left  font-bold">
-              {timeTracking?.timeTrackingSpent} hour(s) spent
+              {sliderMode ? timeTracking?.timeTrackingSpent : 0} hour(s) spent
             </div>
             <div className="text-left  font-bold">
-              {timeTrackingRemaining} hour(s) remaining
+              {sliderMode ? timeTrackingRemaining : 0} hour(s) remaining
             </div>
           </div>
         </div>
@@ -287,6 +296,7 @@ const FormCreateTask = (props) => {
       <div>
         <p className="mt-3">Description</p>
         <Editor
+          value={formik.values.description}
           onBlur={formik.handleBlur}
           onEditorChange={log}
           name="description"
