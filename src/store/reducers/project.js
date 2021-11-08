@@ -6,6 +6,13 @@ const initialState = {
   projectMembers: [],
   projectDetail: null,
   error: null,
+  projectEditInfo:{
+    "id": 0,
+    "projectName": "string",
+    "creator": 0,
+    "description": "string",
+    "categoryId": 1
+  }
 };
 
 const reducer = (state = initialState, { type, payload }) => {
@@ -28,6 +35,10 @@ const reducer = (state = initialState, { type, payload }) => {
     }
     case actionType.SET_PROJECT_ERROR: {
       state.error = payload;
+      return { ...state };
+    }
+    case actionType.SET_PROJECT_EDIT_INFO: {
+      state.projectEditInfo= payload;
       return { ...state };
     }
     default:

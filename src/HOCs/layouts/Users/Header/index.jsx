@@ -15,54 +15,14 @@ const Header = () => {
     history.push("/login");
   };
 
+  
   const projectsMenu = (
     <Menu className={classes.menu}>
-      <Menu.Item key="project" className="h-10 py-2 px-5">
-        <Link to="/projects">View all projects</Link>
+      
+      <Menu.Item key="project" className=" py-2 px-5 text-blue-700 h-8 font-medium">
+        <Link to="/projects">Projects</Link>
       </Menu.Item>
-      <Menu.Item key="newProject" className="h-10 py-2 px-5">
-        <Link to="/projects/new">Create project</Link>
-      </Menu.Item>
-    </Menu>
-  );
 
-  const settingsMenu = (
-    <Menu className={classes.menu}>
-      <Menu.ItemGroup
-        title={
-          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
-            Atlassian Admin
-          </span>
-        }
-      >
-        <Menu.Item
-          key="personalSettings"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/users">User management</Link>
-        </Menu.Item>
-      </Menu.ItemGroup>
-
-      <Menu.ItemGroup
-        title={
-          <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
-            Jira Settings
-          </span>
-        }
-      >
-        <Menu.Item
-          key="profile"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/projects">Projects</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="accountSettings"
-          className={`${classes["menu-item"]} h-10 py-2 px-5`}
-        >
-          <Link to="/projects">Issues</Link>
-        </Menu.Item>
-      </Menu.ItemGroup>
     </Menu>
   );
 
@@ -141,29 +101,14 @@ const Header = () => {
             >
               <Dropdown overlay={projectsMenu} trigger={["click"]}>
                 <button className="text-blue-700 h-8 font-medium py-1.5 px-2 hover:bg-blue-200 focus:bg-blue-200 rounded">
-                  Projects <DownOutlined />
+                  User Management <DownOutlined />
                 </button>
+                {/* thêm ô search tại đây */}
               </Dropdown>
             </div>
-            <button className="flex justify-center items-center h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white font-medium py-1.5 px-3 rounded cursor-pointer">
-              <PlusOutlined className="block sm:hidden align-middle text-white" />
-              <span className="hidden sm:block">Create</span>
-            </button>
           </nav>
+
           <div className="flex items-center">
-            <Dropdown
-              overlay={settingsMenu}
-              trigger={["click"]}
-              className="mr-1"
-            >
-              <Tooltip title="Settings">
-                <Button
-                  className="border-0 shadow-none hover:bg-blue-200 focus:bg-blue-200 hover:text-blue-500 focus:text-blue-500"
-                  shape="circle"
-                  icon={<SettingFilled />}
-                />
-              </Tooltip>
-            </Dropdown>
             <Dropdown overlay={profileMenu} trigger={["click"]}>
               <Tooltip
                 placement="bottomRight"

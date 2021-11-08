@@ -23,6 +23,13 @@ class ProjectService {
     return axiosClient.post("/api/Project/createProjectAuthorize", data);
   }
 
+  updateProject(data) {
+    return axiosClient.put(
+      `/api/Project/updateProject?projectId=${data.id}`,
+      data
+    );
+  }
+
   fetchUsersByProject(projectId) {
     return axiosClient.get("/api/Users/getUserByProjectId", {
       params: { idProject: projectId },
