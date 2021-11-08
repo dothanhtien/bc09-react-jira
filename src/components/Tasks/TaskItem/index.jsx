@@ -6,7 +6,7 @@ import TaskItemPriorityBadge from "../TaskItemPriorityBadge";
 import { ReactComponent as NewTaskIcon } from "../../../assets/images/icons/new_task.svg";
 import { ReactComponent as BugIcon } from "../../../assets/images/icons/bug.svg";
 
-const TaskItem = ({ listTaskDetailItem, index }) => {
+const TaskItem = ({ listTaskDetailItem, index, onClick }) => {
   return (
     <Draggable draggableId={listTaskDetailItem.taskId.toString()} index={index}>
       {(provided) => {
@@ -16,6 +16,7 @@ const TaskItem = ({ listTaskDetailItem, index }) => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             className="w-full bg-white rounded py-3 px-2 mt-1 shadow"
+            onClick={onClick}
           >
             <Row>
               <Col span={18}>
