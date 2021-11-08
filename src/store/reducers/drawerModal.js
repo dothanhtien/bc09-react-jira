@@ -9,12 +9,10 @@ const inititalState = {
   },
 };
 
-export default (state = inititalState, { type, payload }) => {
+const reducer = (state = inititalState, { type, payload }) => {
   switch (type) {
-    
     case actionType.HIDE_DRAWER:
-      return { ...state, visible: false};
-
+      return { ...state, visible: false };
     case actionType.OPEN_FORM_IN_DRAWER_POPUP:
       return {
         ...state,
@@ -22,11 +20,11 @@ export default (state = inititalState, { type, payload }) => {
         CompContentDrawer: payload.component,
         title: payload.title,
       };
-
     case actionType.SET_SUBMIT_FUNCTION:
       return { ...state, callBackSubmit: payload };
-
     default:
       return state;
   }
 };
+
+export default reducer;

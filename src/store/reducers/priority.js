@@ -1,16 +1,17 @@
-import { actionType } from "../actions/type"
-
+import { actionType } from "../actions/type";
 
 const intitialValue = {
-    priority: []
-}
+  priority: [],
+};
 
-export default (state=intitialValue, {type, payload})=>{
-    switch (type){
-        case (actionType.GET_PRIORITY):
-            state = {...state, priority: payload}
-        
-        default:
-            return state
-    }
-}
+const reducer = (state = intitialValue, { type, payload }) => {
+  switch (type) {
+    case actionType.GET_PRIORITY:
+      state.priority = payload;
+      return { ...state };
+    default:
+      return state;
+  }
+};
+
+export default reducer;

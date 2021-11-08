@@ -15,36 +15,30 @@ export const fetchAllUsers = (params) => {
   };
 };
 
-export const deleteUser = (id)=>{
-  return async (dispatch)=>{
-    try{
-      const res = await userService.deleterUser(id)
-      console.log(res.data);
+export const deleteUser = (id) => {
+  return async (dispatch) => {
+    try {
+      await userService.deleterUser(id);
 
-      dispatch(fetchAllUsers())
+      dispatch(fetchAllUsers());
 
-      notifitying('success', 'User successfully deleted')
-
-    }catch(err){
-      console.log({...err});
-      notifitying('warning', 'User failed to be deleted')
-
+      notifitying("success", "User successfully deleted");
+    } catch (err) {
+      console.log(err);
+      notifitying("warning", "User failed to be deleted");
     }
-  }
-}
+  };
+};
 
-export const getMembersByProjectId = (id)=>{
-  return async(dispatch)=>{
-    try{
-      const res = await userService.getMembersByProjectId(id)
-      console.log(res.data.content);
+export const getMembersByProjectId = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await userService.getMembersByProjectId(id);
 
-        dispatch(createAction(actionType.GET_PROJECT_MEMBERS, res.data.content))
-     
-
-    }catch(err){ 
-      dispatch(createAction(actionType.GET_PROJECT_MEMBERS, []))
-      console.log({...err});
+      dispatch(createAction(actionType.GET_PROJECT_MEMBERS, res.data.content));
+    } catch (err) {
+      dispatch(createAction(actionType.GET_PROJECT_MEMBERS, []));
+      console.log(err);
     }
-  }
-}
+  };
+};
