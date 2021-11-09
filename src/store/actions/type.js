@@ -1,6 +1,6 @@
 export const actionType = {
-  // auth
-  SET_LOGIN: "SET_LOGIN",
+  // me
+  SET_ME: "SET_ME",
 
   // projects
   SET_PROJECT_LIST: "SET_PROJECT_LIST",

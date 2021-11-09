@@ -6,7 +6,7 @@ import { ReactComponent as JiraLogo } from "../../../../assets/images/logos/jira
 import { ReactComponent as JiraTextLogo } from "../../../../assets/images/logos/jira_text_logo.svg";
 import classes from "./header.module.css";
 import { ACCESS_TOKEN } from "../../../../utils/constants/config";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createAction } from "../../../../store/actions";
 import { actionType } from "../../../../store/actions/type";
 import FormCreateTask from "../../../../components/Tasks/FormCreateTask";
@@ -14,9 +14,11 @@ import FormCreateTask from "../../../../components/Tasks/FormCreateTask";
 const Header = () => {
   const history = useHistory();
   const dispatch = useDispatch();
+  const me = useSelector((state) => state.me);
 
   const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN);
+    dispatch(createAction(actionType.SET_ME, null));
     history.push("/login");
   };
 
@@ -81,7 +83,7 @@ const Header = () => {
       <Menu.ItemGroup
         title={
           <span className="block mt-3 mb-2 px-2 font-bold text-xs text-gray-400 uppercase">
-            Đỗ Thành Tiến
+            {me?.name}
           </span>
         }
       >
@@ -186,10 +188,7 @@ const Header = () => {
                   shape="circle"
                   className="flex justify-center items-center border-0 shadow-none hover:bg-blue-200 focus:bg-blue-200 hover:text-blue-500 focus:text-blue-500"
                 >
-                  <Avatar
-                    size={24}
-                    src="https://ui-avatars.com/api/?name=Tien%20Do"
-                  />
+                  <Avatar size={24} src={me?.avatar} />
                 </Button>
               </Tooltip>
             </Dropdown>
