@@ -22,7 +22,7 @@ const FormCreateTask = (props) => {
   const editorRef = useRef(null);
   const log = () => {
     if (editorRef.current) {
-      console.log(editorRef.current.getContent());
+      // console.log(editorRef.current.getContent());
       formik.setFieldValue("description", editorRef.current.getContent());
     }
   };
@@ -167,9 +167,7 @@ const FormCreateTask = (props) => {
             className="select"
             name="priorityId"
             value={formik.values.priorityId}
-            onChange={(value) => {
-              formik.setFieldValue("priorityId", value);
-            }}
+            onChange={formik.handleChange}
           >
             {priority?.map((item, i) => {
               return (
