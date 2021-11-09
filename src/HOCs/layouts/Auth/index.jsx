@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
+import { ReactComponent as LoginPic } from "../../../assets/images/login/panel.svg";
 
 const { Sider, Content } = Layout;
 
@@ -21,15 +22,22 @@ const AuthLayout = (props) => {
         width={width / 2}
         style={{
           height,
-          backgroundImage: `url(https://picsum.photos/${Math.round(
-            width / 2
-          )}/${height})`,
           backgroundSize: "100%",
           repeat: "noRepeat",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
-      />
-      
-      <Content>{props.children}</Content>
+      >
+        <LoginPic
+          style={{
+            height,
+            width: `${Math.round(width / 3)}`,
+          }}
+        />
+      </Sider>
+
+      <Content >{props.children}</Content>
     </Layout>
   );
 };

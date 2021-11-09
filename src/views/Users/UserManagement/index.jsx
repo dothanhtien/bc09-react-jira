@@ -23,8 +23,6 @@ const UserManagment = (props) => {
     searchedColumn: "",
   });
 
-  console.log(searchState);
-
   let userList = useSelector((state) => state.user.userList);
 
   const customedUserListForFilter = userList?.map((item, i) => {
@@ -93,7 +91,6 @@ const UserManagment = (props) => {
 
   //table
   const handleChange = (pagination, filters, sorter) => {
-    console.log("Various parameters", pagination, filters, sorter);
     setState({
       filteredInfo: filters,
       sortedInfo: sorter,
@@ -208,8 +205,6 @@ const UserManagment = (props) => {
   return (
     <>
       <Space style={{ marginBottom: 16 }}>
-        <Button onClick={setIdSort}>Sort User ID</Button>
-        <Button onClick={clearFilters}>Clear filters</Button>
         <Button onClick={clearAll}>Clear filters and sorters</Button>
       </Space>
       <Table

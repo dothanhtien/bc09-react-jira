@@ -19,7 +19,6 @@ const Login = (props) => {
     validationSchema: schema,
     validationOnMount: true,
   });
-  console.log(formik.values);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,7 +52,7 @@ const Login = (props) => {
       >
         <h3 className="text-center" style={{ fontWeight: 300, fontSize: 35 }}>
           {" "}
-          Login CyberBugs
+          Login
         </h3>
 
         {/* email*/}

@@ -70,8 +70,9 @@ export const createTaskForm = (data) => {
 
       notifitying("success", "Task successfully created");
       dispatch(createAction(actionType.HIDE_DRAWER));
+
     } catch (err) {
-      console.log({ ...err });
+      console.log({...err});
       notifitying("warning", "Task failed to be created");
       dispatch(createAction(actionType.HIDE_DRAWER));
     }
