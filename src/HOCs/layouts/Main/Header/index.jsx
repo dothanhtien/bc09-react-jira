@@ -159,7 +159,7 @@ const Header = () => {
             </div>
 
             <Button
-              className="text-blue-700 hover:text-blue-700 focus:text-blue-700 h-8 font-medium py-1.5 px-2 hover:bg-blue-200 focus:bg-blue-200 rounded border-0"
+              className="text-blue-700 hover:text-blue-700 focus:text-blue-700 h-8 font-medium py-1.5 px-2 hover:bg-blue-200 focus:bg-blue-200 rounded border-0 shadow-none"
               onClick={handleCreateTask}
             >
               Create Task
