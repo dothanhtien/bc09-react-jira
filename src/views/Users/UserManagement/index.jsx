@@ -18,11 +18,6 @@ const UserManagment = (props) => {
     sortedInfo: null,
   });
 
-  const [searchState, setSearchState] = useState({
-    searchText: "",
-    searchedColumn: "",
-  });
-
   let userList = useSelector((state) => state.user.userList);
 
   const customedUserListForFilter = userList?.map((item, i) => {
@@ -30,7 +25,7 @@ const UserManagment = (props) => {
   });
 
   const customedListForNumber = userList?.map((item, index) => {
-    return { ...item, orderNumber: index + 1 };
+    return { ...item, orderNumber: index + 1, key: item.userId };
   });
 
   useEffect(() => {
@@ -83,10 +78,6 @@ const UserManagment = (props) => {
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    setSearchState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
   };
 
   //table
@@ -97,23 +88,10 @@ const UserManagment = (props) => {
     });
   };
 
-  const clearFilters = () => {
-    setState({ filteredInfo: null });
-  };
-
   const clearAll = () => {
     setState({
       filteredInfo: null,
       sortedInfo: null,
-    });
-  };
-
-  const setIdSort = () => {
-    setState({
-      sortedInfo: {
-        order: "ascend",
-        columnKey: "userId",
-      },
     });
   };
 

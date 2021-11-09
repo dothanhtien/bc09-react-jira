@@ -10,7 +10,7 @@ export const logIn = (values, callback) => {
       const res = await authService.logIn(values);
       swal("To team Jira 6!", "API successfully called!", "success");
 
-      dispatch(createAction(actionType.SET_LOGIN, res.data));
+      dispatch(createAction(actionType.SET_ME, res.data.content));
 
       localStorage.setItem(ACCESS_TOKEN, res.data.content.accessToken);
       localStorage.setItem("loginInfo", JSON.stringify(res.data.content));
@@ -45,7 +45,11 @@ export const fetchMe = async (dispatch) => {
   try {
     const res = await authService.fetchMe();
 
-    dispatch(createAction(actionType.SET_LOGIN, res.data));
+    const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+
+    const me = res.data.content.find((user) => user.userId === loginInfo.id);
+
+    dispatch(createAction(actionType.SET_ME, { ...me, id: me.userId }));
   } catch (err) {
     console.log(err);
   }

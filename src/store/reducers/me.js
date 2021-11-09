@@ -4,11 +4,13 @@ const initialState = null;
 
 const reducer = (state = initialState, { type, payload }) => {
   switch (type) {
-    case actionType.SET_LOGIN:
+    case actionType.SET_ME: {
       state = payload;
-      return { ...state };
+      return state;
+    }
     default:
-        return state
+      return state;
   }
 };
-export default reducer
+
+export default reducer;
