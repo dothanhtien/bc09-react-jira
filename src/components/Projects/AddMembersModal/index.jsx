@@ -1,5 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { List, Modal, Button, Avatar, Row, Col, Typography } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Avatar,
+  Button,
+  Col,
+  Form,
+  Input,
+  List,
+  Modal,
+  Row,
+  Typography,
+} from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,7 +25,9 @@ const AddMembersModal = (props) => {
   const history = useHistory();
   const projectMembers = useSelector((state) => state.project.projectMembers);
   const userList = useSelector((state) => state.user.userList);
-  const [availableUsers, setAvailableUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const usersRef = useRef(null);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchUsersByProject(props.project.id));
@@ -24,6 +37,7 @@ const AddMembersModal = (props) => {
   useEffect(() => {
     const clonedUsers = [...userList];
 
+    // remove members from user list
     for (const member of projectMembers) {
       const index = clonedUsers.findIndex((item) => {
         return item.userId === member.userId;
@@ -32,7 +46,13 @@ const AddMembersModal = (props) => {
       clonedUsers.splice(index, 1);
     }
 
-    setAvailableUsers([...clonedUsers]);
+    usersRef.current = [...clonedUsers];
+
+    if (!searchRef.current) {
+      setFilteredUsers([...clonedUsers]);
+    } else {
+      handleSearchUsers();
+    }
   }, [projectMembers, userList]);
 
   const addMemberToProject = (userId) => () => {
@@ -56,6 +76,31 @@ const AddMembersModal = (props) => {
   const handleGoToProjectsButtonClick = () => {
     props.onCancel();
     history.push("/projects");
+  };
+
+  const handleSearchUsers = (e) => {
+    const value = searchRef.current.input.value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
+    const clonedUsers = [...usersRef.current];
+
+    let foundUsers = [];
+
+    for (const i in clonedUsers) {
+      if (
+        clonedUsers[i].name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .includes(value)
+      ) {
+        foundUsers.push(clonedUsers[i]);
+      }
+    }
+
+    setFilteredUsers([...foundUsers]);
   };
 
   return (
@@ -92,8 +137,27 @@ const AddMembersModal = (props) => {
       ]}
     >
       <Row gutter={36}>
+        <Col span={24}>
+          <Form className="mt-6">
+            <Form.Item
+              label="Search users"
+              colon={false}
+              className="pl-6 pr-6"
+              labelCol={{ span: 4 }}
+              labelAlign="left"
+            >
+              <Input
+                allowClear
+                suffix={<SearchOutlined />}
+                className="w-48 rounded"
+                onChange={handleSearchUsers}
+                ref={searchRef}
+              />
+            </Form.Item>
+          </Form>
+        </Col>
         <Col span={12}>
-          <Typography.Title level={5} className="text-center">
+          <Typography.Title level={5} className="pl-6">
             Not yet added
           </Typography.Title>
           <List
@@ -103,7 +167,7 @@ const AddMembersModal = (props) => {
               padding: "8px 24px",
             }}
             itemLayout="horizontal"
-            dataSource={availableUsers}
+            dataSource={filteredUsers}
             renderItem={(item) => (
               <List.Item>
                 <List.Item.Meta
@@ -126,7 +190,7 @@ const AddMembersModal = (props) => {
           />
         </Col>
         <Col span={12}>
-          <Typography.Title level={5} className="text-center">
+          <Typography.Title level={5} className="pl-6">
             Already in project
           </Typography.Title>
           <List
