@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Breadcrumb, Button, Form, Input, Select, Typography } from "antd";
-import { Editor } from "@tinymce/tinymce-react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
+import AddMembersModal from "../../../components/Projects/AddMembersModal";
+import TinyMCEEditor from "../../../components/UI/Input/TinyMCEEditor";
 import {
   createProjectAuthorize,
   fetchAllProjectCategories,
 } from "../../../store/actions/project";
 import { createProjectSchema } from "../../../services/project";
-import AddMembersModal from "../../../components/Projects/AddMembersModal";
 import { createAction } from "../../../store/actions";
 import { actionType } from "../../../store/actions/type";
 
@@ -20,7 +20,7 @@ const NewProject = (props) => {
   );
   const serverError = useSelector((state) => state.project.error);
   const projectDetail = useSelector((state) => state.project.projectDetail);
-  const [showAddMembersModal, setShowAddMembersModal] = useState(true);
+  const [showAddMembersModal, setShowAddMembersModal] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -52,10 +52,6 @@ const NewProject = (props) => {
     }
     // eslint-disable-next-line
   }, [serverError]);
-
-  const handleEditorChange = (newValue, editor) => {
-    formik.setFieldValue("description", newValue);
-  };
 
   const handleSubmit = () => {
     formik.setTouched({
@@ -142,29 +138,12 @@ const NewProject = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Description">
-          <Editor
-            apiKey="gof6u0hypfiazxgjtu3s1sr4rzde9h8k4ooeqc7q2h3t7dpn"
-            init={{
-              menubar: false,
-              plugins: [
-                "advlist autolink lists link image charmap print preview anchor",
-                "searchreplace visualblocks code fullscreen",
-                "insertdatetime media table paste code help wordcount",
-              ],
-              toolbar:
-                "formatselect | " +
-                "bold italic underline forecolor strikethrough superscript subscript | alignleft aligncenter | " +
-                "link | " +
-                "alignright alignjustify | bullist numlist outdent indent | " +
-                "removeformat | help",
-              content_style:
-                "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue'; font-size:14px }",
-            }}
+        <Form.Item label="Description" style={{ minHeight: 230 }}>
+          <TinyMCEEditor
             name="description"
             value={formik.values.description}
-            onEditorChange={(newValue, editor) =>
-              handleEditorChange(newValue, editor)
+            onEditorChange={(newValue) =>
+              formik.setFieldValue("description", newValue)
             }
           />
         </Form.Item>

@@ -1,31 +1,24 @@
-import { Editor } from "@tinymce/tinymce-react";
+import React, { useEffect, useState } from "react";
 import { Select, Slider } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import { useFormik } from "formik";
+import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
+import { useFormik } from "formik";
+import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
 import { createAction } from "../../../store/actions";
-import { getPriority } from "../../../store/actions/priority";
+import { actionType } from "../../../store/actions/type";
 import { fetchAllProjects } from "../../../store/actions/project";
+import { getMembersByProjectId } from "../../../store/actions/user";
+import { getPriority } from "../../../store/actions/priority";
 import { getStatus } from "../../../store/actions/status";
 import { createTaskForm, fetchAllTaskTypes } from "../../../store/actions/task";
-import { actionType } from "../../../store/actions/type";
-import { getMembersByProjectId } from "../../../store/actions/user";
+import { createTaskSchema } from "../../../services/task";
 import { ACCESS_TOKEN } from "../../../utils/constants/config";
 import "./index.css";
-import { createTaskSchema } from "../../../services/task";
-import { useHistory } from "react-router";
 
 const FormCreateTask = (props) => {
   let history = useHistory();
   const dispatch = useDispatch();
   const [sliderMode, setSliderMode] = useState(true);
-  const editorRef = useRef(null);
-  const log = () => {
-    if (editorRef.current) {
-      // console.log(editorRef.current.getContent());
-      formik.setFieldValue("description", editorRef.current.getContent());
-    }
-  };
 
   const [timeTracking, setTimeTracking] = useState({
     totalEstimatedHours: 0,
@@ -228,7 +221,6 @@ const FormCreateTask = (props) => {
             <input
               name="originalEstimate"
               type="number"
-              defaultValue="0"
               className="select"
               min="0"
               value={formik.values.originalEstimate}
@@ -248,7 +240,6 @@ const FormCreateTask = (props) => {
               name="timeTrackingSpent"
               className="select input"
               type="number"
-              defaultValue="0"
               value={formik.values.timeTrackingSpent}
               min="0"
               max={timeTracking.totalEstimatedHours}
@@ -289,29 +280,10 @@ const FormCreateTask = (props) => {
       {/* description */}
       <div>
         <p className="mt-3">Description</p>
-        <Editor
-          value={formik.values.description}
-          onBlur={formik.handleBlur}
-          onEditorChange={log}
+        <TinyMCEEditor
           name="description"
-          onInit={(evt, editor) => (editorRef.current = editor)}
-          initialValue=""
-          init={{
-            height: 500,
-            menubar: false,
-            plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount",
-            ],
-            toolbar:
-              "undo redo | formatselect | " +
-              "bold italic backcolor | alignleft aligncenter " +
-              "alignright alignjustify | bullist numlist outdent indent | " +
-              "removeformat | help",
-            content_style:
-              "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-          }}
+          value={formik.values.description}
+          onEditorChange={(value) => formik.setFieldValue("description", value)}
         />
         {formik.touched.description && (
           <p className="text-red-600">{formik.errors.description}</p>
