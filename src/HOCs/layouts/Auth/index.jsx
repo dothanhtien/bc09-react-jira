@@ -37,7 +37,10 @@ const AuthLayout = (props) => {
         />
       </Sider>
 
-      <Content >{props.children}</Content>
+      <Content style={{
+            height,
+            width: `${Math.round(width / 3)}`,
+          }} >{props.children}</Content>
     </Layout>
   );
 };

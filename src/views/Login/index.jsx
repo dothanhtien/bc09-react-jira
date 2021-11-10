@@ -43,12 +43,11 @@ const Login = (props) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="container"
-      style={{ height: window.innerHeight }}
+      className="container "
+      style={{ height: "auto", width: "auto"}}
     >
       <div
-        className="flex flex-col justify-center items-center"
-        style={{ height: window.innerHeight }}
+        className="flex flex-col justify-center items-center min-h-screen "
       >
         <h3 className="text-center" style={{ fontWeight: 300, fontSize: 35 }}>
           {" "}
@@ -56,14 +55,14 @@ const Login = (props) => {
         </h3>
 
         {/* email*/}
-        <div className="mt-3">
+        <div className="mt-3 lg:w-1/2">
           <Input
             name="email"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             size="large"
             placeholder="email"
-            style={{ minWidth: 300, borderRadius: 5 }}
+            style={{ minWidth: 200, borderRadius: 5 }}
             prefix={<MailOutlined />}
           />
         </div>
@@ -72,7 +71,7 @@ const Login = (props) => {
         )}
 
         {/* password */}
-        <div className="mt-3">
+        <div className="mt-3 lg:w-1/2">
           <Input
             name="password"
             onChange={formik.handleChange}
@@ -80,7 +79,7 @@ const Login = (props) => {
             type="password"
             size="large"
             placeholder="password"
-            style={{ minWidth: 300, borderRadius: 5 }}
+            style={{  minWidth: 200, borderRadius: 5 }}
             prefix={<LockOutlined />}
           />
         </div>
@@ -91,12 +90,12 @@ const Login = (props) => {
           htmlType="submit"
           size="large"
           style={{
-            minWidth: 300,
+            minWidth: 200,
             backgroundColor: "rgb(102,117,223)",
             color: "#fff",
             borderRadius: 5,
           }}
-          className="mt-5"
+          className="mt-5 lg:w-1/2"
         >
           Login
         </Button>
