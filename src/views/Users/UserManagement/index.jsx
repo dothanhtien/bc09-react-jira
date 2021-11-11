@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Button, Space, Input } from "antd";
+import { Table, Button, Space, Input, Popconfirm } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Popconfirm } from "antd";
-import { Link } from "react-router-dom";
 import { deleteUser, fetchAllUsers } from "../../../store/actions/user";
+import EditUserModal from "../../../components/Users/EditUserModal";
 
 const UserManagment = (props) => {
   const dispatch = useDispatch();
-
-  const [state, setState] = useState({
-    filteredInfo: null,
-    sortedInfo: null,
-  });
-
   let userList = useSelector((state) => state.user.userList);
+  const [state, setState] = useState({ filteredInfo: null, sortedInfo: null });
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchAllUsers());
+  }, [dispatch]);
 
   const customedUserListForFilter = userList?.map((item, i) => {
     return { text: item.name, value: item.name };
@@ -28,11 +28,6 @@ const UserManagment = (props) => {
     return { ...item, orderNumber: index + 1, key: item.userId };
   });
 
-  useEffect(() => {
-    dispatch(fetchAllUsers());
-  }, [dispatch]);
-
-  //search
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -80,7 +75,6 @@ const UserManagment = (props) => {
     confirm();
   };
 
-  //table
   const handleChange = (pagination, filters, sorter) => {
     setState({
       filteredInfo: filters,
@@ -93,6 +87,15 @@ const UserManagment = (props) => {
       filteredInfo: null,
       sortedInfo: null,
     });
+  };
+
+  const handleEditUser = (user) => () => {
+    setSelectedUser(user);
+    setShowEditUserModal(true);
+  };
+
+  const handleCancelEditUser = () => {
+    setShowEditUserModal(false);
   };
 
   let { sortedInfo, filteredInfo } = state;
@@ -155,25 +158,25 @@ const UserManagment = (props) => {
       render: (text, record, index) => (
         <Space size="small">
           {/* edit button */}
-          <Link
-            to={`/users/${record.userId}/edit`}
-            className="text-blue-500 rounded  p-2 "
-          >
-            <EditOutlined />
-          </Link>
+          <Button
+            className="bg-transparent hover:bg-transparent focus:bg-transparent text-blue-700 hover:text-blue-500 focus:text-blue-500 border-0 shadow-none"
+            icon={<EditOutlined />}
+            onClick={handleEditUser(record)}
+          />
 
           {/* delete button*/}
           <Popconfirm
-            title="Are you sure to delete this project?"
+            title="Are you sure to delete this user?"
             onConfirm={() => {
               dispatch(deleteUser(record.userId));
             }}
             okText="Yes"
             cancelText="No"
           >
-            <a href=" " className="ml-0 text-red-400 rounded  p-2 ">
-              <DeleteOutlined />
-            </a>
+            <Button
+              className="bg-transparent hover:bg-transparent focus:bg-transparent text-red-600 hover:text-red-500 focus:text-red-500 border-0 shadow-none"
+              icon={<DeleteOutlined />}
+            />
           </Popconfirm>
         </Space>
       ),
@@ -185,11 +188,20 @@ const UserManagment = (props) => {
       <Space style={{ marginBottom: 16 }}>
         <Button onClick={clearAll}>Clear filters and sorters</Button>
       </Space>
+
       <Table
         columns={columns}
         dataSource={customedListForNumber}
         onChange={handleChange}
       />
+      
+      {selectedUser && (
+        <EditUserModal
+          visible={showEditUserModal}
+          onCancel={handleCancelEditUser}
+          user={selectedUser}
+        />
+      )}
     </>
   );
 };

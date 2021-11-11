@@ -42,3 +42,17 @@ export const getMembersByProjectId = (id) => {
     }
   };
 };
+
+export const updateUser = (data, callback) => {
+  return async () => {
+    try {
+      userService.updateUser(data);
+
+      if (callback) {
+        callback();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
