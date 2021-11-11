@@ -22,7 +22,6 @@ import EditProject from "./views/Projects/Edit";
 import Tasks from "./views/Tasks";
 
 import UserManagment from "./views/Users/UserManagement";
-import EditUser from "./views/Users/EditUsers";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -90,13 +89,6 @@ const App = () => {
           path="/users"
           exact
           component={UserManagment}
-          layout={MainLayout}
-          redirectPath="/login"
-        />
-        <PrivateRoute
-          path="/users/:id/edit"
-          exact
-          component={EditUser}
           layout={MainLayout}
           redirectPath="/login"
         />
