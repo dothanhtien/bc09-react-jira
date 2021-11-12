@@ -21,6 +21,7 @@ import {
 import { fetchAllUsers } from "../../../store/actions/user";
 
 const AddMembersModal = (props) => {
+  const { showFooter = true } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const projectMembers = useSelector((state) => state.project.projectMembers);
@@ -60,6 +61,10 @@ const AddMembersModal = (props) => {
     dispatch(
       assignUserToProject(data, () => {
         dispatch(fetchUsersByProject(props.project.id));
+
+        if (props.onFetchProject) {
+          props.onFetchProject();
+        }
       })
     );
   };
@@ -69,6 +74,10 @@ const AddMembersModal = (props) => {
     dispatch(
       removeUserFromProject(data, () => {
         dispatch(fetchUsersByProject(props.project.id));
+
+        if (props.onFetchProject) {
+          props.onFetchProject();
+        }
       })
     );
   };
@@ -106,7 +115,7 @@ const AddMembersModal = (props) => {
   return (
     <Modal
       title={
-        <Typography.Title level={4} className="mb-0">
+        <Typography.Title level={4} className="pl-6">
           Add members to project{" "}
           <span className="text-blue-700">{props.project.projectName}</span>
         </Typography.Title>
@@ -119,26 +128,31 @@ const AddMembersModal = (props) => {
       width={980}
       onCancel={props.onCancel}
       maskClosable={false}
-      footer={[
-        <Button
-          key="projects"
-          onClick={handleGoToProjectsButtonClick}
-          className="h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
-        >
-          Go to projects
-        </Button>,
-        <Button
-          key="newProject"
-          onClick={props.onCancel}
-          className="h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
-        >
-          Create new project
-        </Button>,
-      ]}
+      destroyOnClose={true}
+      footer={
+        showFooter
+          ? [
+              <Button
+                key="projects"
+                onClick={handleGoToProjectsButtonClick}
+                className="h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
+              >
+                Go to projects
+              </Button>,
+              <Button
+                key="newProject"
+                onClick={props.onCancel}
+                className="h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
+              >
+                Create new project
+              </Button>,
+            ]
+          : null
+      }
     >
       <Row gutter={36}>
         <Col span={24}>
-          <Form className="mt-6">
+          <Form>
             <Form.Item
               label="Search users"
               colon={false}
