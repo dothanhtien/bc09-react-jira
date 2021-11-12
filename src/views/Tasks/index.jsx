@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Breadcrumb, Col, Row, Select, Tooltip, Typography } from "antd";
+import {
+  Avatar,
+  Breadcrumb,
+  Col,
+  Row,
+  Select,
+  Tooltip,
+  Typography,
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -177,14 +185,38 @@ const Tasks = (props) => {
 
   return (
     <>
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>{clonedProjectDetail?.projectName}</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Typography.Title level={3}>Board</Typography.Title>
+      <Row className="mb-4">
+        <Col xs={{ span: 24 }} md={{ span: 6 }}>
+          <Typography.Title level={3}>Board</Typography.Title>
+        </Col>
+
+        <Col xs={{ span: 24 }} md={{ span: 18 }}>
+          {!!projectDetail?.members.length && (
+            <Typography.Text strong className="mr-4">
+              Members
+            </Typography.Text>
+          )}
+
+          {projectDetail?.members.map((member) => {
+            return (
+              <Tooltip key={member.userId} title={member.name} placement="top">
+                <Avatar
+                  src={member.avatar}
+                  alt={member.name}
+                  className="mr-1"
+                />
+              </Tooltip>
+            );
+          })}
+        </Col>
+      </Row>
 
       <Row gutter={16}>
         <DragDropContext onDragEnd={handleDragEnd}>
