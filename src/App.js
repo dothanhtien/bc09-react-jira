@@ -23,6 +23,8 @@ import Tasks from "./views/Tasks";
 
 import UserManagment from "./views/Users/UserManagement";
 
+import MyProfile from "./views/MyProfile";
+
 const App = () => {
   const dispatch = useDispatch();
 
@@ -89,6 +91,13 @@ const App = () => {
           path="/users"
           exact
           component={UserManagment}
+          layout={MainLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="/my-profile"
+          exact
+          component={MyProfile}
           layout={MainLayout}
           redirectPath="/login"
         />
