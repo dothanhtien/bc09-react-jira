@@ -27,9 +27,6 @@ export const createTask = (data, callback) => {
       if (callback) {
         callback();
       }
-
-      notifitying("success", "Task successfully created");
-      dispatch(createAction(actionType.HIDE_DRAWER));
     } catch (err) {
       console.log(err);
 

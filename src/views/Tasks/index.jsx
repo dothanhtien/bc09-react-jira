@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   Breadcrumb,
+  Button,
   Col,
   Row,
   Select,
@@ -25,6 +26,7 @@ import {
 import TaskListTitle from "../../components/Tasks/TaskListTitle";
 import TaskItem from "../../components/Tasks/TaskItem";
 import EditTaskModal from "../../components/Tasks/EditTaskModal";
+import AddMembersModal from "../../components/Projects/AddMembersModal";
 import { ReactComponent as NewTaskIcon } from "../../assets/images/icons/new_task.svg";
 import { ReactComponent as BugIcon } from "../../assets/images/icons/bug.svg";
 
@@ -37,6 +39,7 @@ const Tasks = (props) => {
   const [showNewTaskTextarea, setShowNewTaskTextarea] = useState(false);
   const [showEditTaskModal, setShowEditTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [showAddMembersModal, setShowAddMembersModal] = useState(false);
   const newTaskRef = useRef(null);
   const { projectId } = props.match.params;
 
@@ -183,6 +186,14 @@ const Tasks = (props) => {
     setShowEditTaskModal(false);
   };
 
+  const handleCancelUpdateMembers = () => {
+    setShowAddMembersModal(false);
+  };
+
+  const handleFetchProject = () => {
+    dispatch(fetchProjectDetail(projectId));
+  };
+
   return (
     <>
       <Breadcrumb className="mb-4">
@@ -215,6 +226,19 @@ const Tasks = (props) => {
               </Tooltip>
             );
           })}
+
+          {!projectDetail?.members.length && (
+            <Typography.Text strong className="mr-4">
+              Add members
+            </Typography.Text>
+          )}
+
+          <Button
+            shape="circle"
+            icon={<PlusOutlined />}
+            className="hover:border-blue-600 focus:border-blue-600 hover:text-blue-600 focus:text-blue-600"
+            onClick={() => setShowAddMembersModal(true)}
+          />
         </Col>
       </Row>
 
@@ -376,6 +400,16 @@ const Tasks = (props) => {
           visible={showEditTaskModal}
           onCancel={handleCancelEditTask}
           task={selectedTask}
+        />
+      )}
+
+      {projectDetail && (
+        <AddMembersModal
+          visible={showAddMembersModal}
+          onCancel={handleCancelUpdateMembers}
+          project={projectDetail}
+          onFetchProject={handleFetchProject}
+          showFooter={false}
         />
       )}
     </>
