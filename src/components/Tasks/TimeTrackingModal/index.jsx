@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button, Col, Form, Input, Modal, Row, Typography } from "antd";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
@@ -19,7 +19,6 @@ const TimeTrackingModal = (props) => {
   } = props;
   const dispatch = useDispatch();
   const timeTrackingSpentRef = useRef(timeTrackingSpent);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -47,13 +46,10 @@ const TimeTrackingModal = (props) => {
       return;
     }
 
-    setIsUpdating(true);
-
     dispatch(
       updateTimeTracking(data, () => {
         setTimeout(() => {
           dispatch(fetchTaskDetail(taskId));
-          setIsUpdating(false);
           formik.resetForm();
           onCancel();
         }, 1000);
@@ -71,6 +67,7 @@ const TimeTrackingModal = (props) => {
       footer={null}
       closable={false}
       destroyOnClose={true}
+      style={{ top: 80 }}
     >
       <Typography.Title level={4}>Time tracking</Typography.Title>
 
@@ -124,7 +121,6 @@ const TimeTrackingModal = (props) => {
           <Button
             htmlType="submit"
             className="bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded mr-1"
-            disabled={isUpdating}
           >
             Save
           </Button>

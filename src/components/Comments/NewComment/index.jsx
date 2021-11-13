@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Avatar, Button, Comment, Form } from "antd";
-import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { insertComment } from "../../../store/actions/comment";
 import { fetchTaskDetail } from "../../../store/actions/task";
+import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
 
 const NewComment = ({ taskId }) => {
   const dispatch = useDispatch();
+  const me = useSelector((state) => state.me);
   const [showNewCommentInput, setShowNewCommentInput] = useState(false);
 
   const formik = useFormik({
@@ -22,18 +23,18 @@ const NewComment = ({ taskId }) => {
 
     dispatch(
       insertComment(formik.values, () => {
-        formik.resetForm();
-        dispatch(fetchTaskDetail(taskId));
-        setShowNewCommentInput(false);
+        setTimeout(() => {
+          formik.resetForm();
+          dispatch(fetchTaskDetail(taskId));
+          setShowNewCommentInput(false);
+        }, 400);
       })
     );
   };
 
   return (
     <Comment
-      avatar={
-        <Avatar src="https://ui-avatars.com/api/?name=Tiến Đỗ" alt="Tiến Đỗ" />
-      }
+      avatar={<Avatar src={me.avatar} alt={me.name} />}
       content={
         <>
           {!showNewCommentInput && (

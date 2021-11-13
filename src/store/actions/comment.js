@@ -1,4 +1,6 @@
 import { commentService } from "../../services";
+import { createAction } from ".";
+import { actionType } from "./type";
 
 export const fetchAllComments = (params, callback) => {
   return async () => {
@@ -15,7 +17,7 @@ export const fetchAllComments = (params, callback) => {
 export const insertComment = (data, callback) => {
   return async () => {
     try {
-      commentService.insertComment(data);
+      await commentService.insertComment(data);
 
       if (callback) callback();
     } catch (err) {
@@ -25,25 +27,37 @@ export const insertComment = (data, callback) => {
 };
 
 export const updateComment = (params, callback) => {
-  return async () => {
+  return async (dispatch) => {
+    dispatch(createAction(actionType.SET_COMMENT_ERROR, null));
     try {
       await commentService.updateComment(params);
 
       if (callback) callback();
     } catch (err) {
       console.log(err);
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_COMMENT_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
 
 export const deleteComment = (params, callback) => {
-  return async () => {
+  return async (dispatch) => {
+    dispatch(createAction(actionType.SET_COMMENT_ERROR, null));
     try {
       await commentService.deleteComment(params);
 
       if (callback) callback();
     } catch (err) {
       console.log(err);
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_COMMENT_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };

@@ -4,7 +4,7 @@ import { actionType } from "./type";
 import { notifitying } from "../../utils/notification";
 
 export const updateTaskStatus = ({ taskId, statusId }, callback) => {
-  return async (dispatch) => {
+  return async () => {
     try {
       await taskService.updateTaskStatus(taskId, statusId);
 
@@ -19,9 +19,8 @@ export const updateTaskStatus = ({ taskId, statusId }, callback) => {
 
 export const createTask = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
-      dispatch(createAction(actionType.SET_TASK_ERROR, null));
-
       await taskService.createTask(data);
 
       if (callback) {
@@ -67,9 +66,8 @@ export const createTaskForm = (data) => {
 
       notifitying("success", "Task successfully created");
       dispatch(createAction(actionType.HIDE_DRAWER));
-
     } catch (err) {
-      console.log({...err});
+      console.log(err);
       notifitying("warning", "Task failed to be created");
       dispatch(createAction(actionType.HIDE_DRAWER));
     }
@@ -93,7 +91,7 @@ export const fetchTaskDetail = (taskId, callback) => {
 };
 
 export const updateTask = (data, callback) => {
-  return async (dispatch) => {
+  return async () => {
     try {
       await taskService.updateTask(data);
 
@@ -108,6 +106,7 @@ export const updateTask = (data, callback) => {
 
 export const updateDescription = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
       await taskService.updateDescription(data);
 
@@ -116,12 +115,21 @@ export const updateDescription = (data, callback) => {
       }
     } catch (err) {
       console.log(err);
+      if (
+        err.response.data.statusCode === 404 &&
+        err.response.data.content === "user is not assign!"
+      ) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
 
 export const updatePriority = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
       await taskService.updatePriority(data);
 
@@ -130,12 +138,20 @@ export const updatePriority = (data, callback) => {
       }
     } catch (err) {
       console.log(err);
+      if (
+        err.response.data.statusCode === 404 &&
+        err.response.data.content === "user is not assign!"
+      ) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
 
 export const assignUserToTask = (data, callback) => {
-  return async (dispatch) => {
+  return async () => {
     try {
       taskService.assignUserToTask(data);
 
@@ -149,7 +165,7 @@ export const assignUserToTask = (data, callback) => {
 };
 
 export const removeUserFromTask = (data, callback) => {
-  return async (dispatch) => {
+  return async () => {
     try {
       taskService.removeUserFromTask(data);
 
@@ -164,28 +180,46 @@ export const removeUserFromTask = (data, callback) => {
 
 export const updateEstimate = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
-      taskService.updateEstimate(data);
+      await taskService.updateEstimate(data);
 
       if (callback) {
         callback();
       }
     } catch (err) {
       console.log(err);
+      if (
+        err.response.data.statusCode === 404 &&
+        err.response.data.content === "user is not assign!"
+      ) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
 
 export const updateTimeTracking = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
-      taskService.updateTimeTracking(data);
+      await taskService.updateTimeTracking(data);
 
       if (callback) {
         callback();
       }
     } catch (err) {
       console.log(err);
+      if (
+        err.response.data.statusCode === 404 &&
+        err.response.data.content === "user is not assign!"
+      ) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };

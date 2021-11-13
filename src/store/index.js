@@ -9,6 +9,7 @@ import task from "./reducers/task";
 import drawerModal from "./reducers/drawerModal";
 import priority from "./reducers/priority";
 import status from "./reducers/status";
+import comment from "./reducers/comment";
 
 const reducer = combineReducers({
   me,
@@ -18,6 +19,7 @@ const reducer = combineReducers({
   drawerModal,
   priority,
   status,
+  comment,
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

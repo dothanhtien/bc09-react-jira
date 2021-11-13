@@ -25,4 +25,7 @@ export const actionType = {
 
   // users
   SET_USER_LIST: "SET_USER_LIST",
+
+  // comments
+  SET_COMMENT_ERROR: "SET_COMMENT_ERROR",
 };

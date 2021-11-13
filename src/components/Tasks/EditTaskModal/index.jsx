@@ -21,6 +21,8 @@ import {
 } from "@ant-design/icons";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
+import { createAction } from "../../../store/actions";
+import { actionType } from "../../../store/actions/type";
 import {
   fetchAllTaskTypes,
   fetchTaskDetail,
@@ -48,8 +50,9 @@ import { ReactComponent as ExclamationIcon } from "../../../assets/images/icons/
 const EditTaskModal = (props) => {
   const { projectId, taskId } = props.task;
   const dispatch = useDispatch();
-  const taskTypes = useSelector((state) => state.task.taskTypes);
   const projectDetail = useSelector((state) => state.project.projectDetail);
+  const taskTypes = useSelector((state) => state.task.taskTypes);
+  const taskError = useSelector((state) => state.task.error);
   const taskDetail = useSelector((state) => state.task.taskDetail);
   const prevValues = useRef(null);
   const taskNameInputRef = useRef(null);
@@ -75,6 +78,26 @@ const EditTaskModal = (props) => {
   useEffect(() => {
     dispatch(fetchTaskDetail(taskId));
   }, [dispatch, taskId]);
+
+  useEffect(() => {
+    if (taskError === "user is not assign!") {
+      Modal.warning({
+        title: "Opps! Something went wrong",
+        content: "You are not an assignee",
+        okText: "OK",
+        okButtonProps: {
+          className:
+            "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
+        },
+        zIndex: 1050,
+        style: { top: 80 },
+        maskClosable: true,
+        afterClose: () => {
+          dispatch(createAction(actionType.SET_TASK_ERROR, null));
+        },
+      });
+    }
+  }, [taskError, dispatch]);
 
   useEffect(() => {
     formik.setValues({
@@ -165,6 +188,7 @@ const EditTaskModal = (props) => {
           "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
       },
       zIndex: 1050,
+      style: { top: 80 },
       onOk: () => {
         formik.setFieldValue("taskName", prevValues.current.taskName);
       },
@@ -285,6 +309,8 @@ const EditTaskModal = (props) => {
 
     dispatch(
       updateEstimate(data, () => {
+        // update Edit task modal
+        dispatch(fetchTaskDetail(taskId));
         setShowEstimateInput(false);
       })
     );
@@ -317,7 +343,6 @@ const EditTaskModal = (props) => {
               bordered={false}
               showArrow={false}
               className="mb-1 hover:bg-gray-100 rounded hover:shadow"
-              optionLabelProp="label"
               dropdownMatchSelectWidth={false}
               style={{ marginLeft: "-8px" }}
             >
@@ -424,7 +449,7 @@ const EditTaskModal = (props) => {
               </Form>
             </div>
 
-            <div className="description-container mb-2">
+            <div className="description-container mb-6">
               <Typography.Text strong className="pl-1">
                 Description
               </Typography.Text>
@@ -711,6 +736,7 @@ const EditTaskModal = (props) => {
         footer={null}
         closable={false}
         width={400}
+        style={{ top: 80 }}
       >
         <Typography.Title level={4}>
           <div className="flex items-center">
