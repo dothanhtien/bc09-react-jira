@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Comment, Avatar, Form, Typography, Button, Modal } from "antd";
 import parse from "html-react-parser";
 import { useFormik } from "formik";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { createAction } from "../../../store/actions";
+import { actionType } from "../../../store/actions/type";
+import { fetchTaskDetail } from "../../../store/actions/task";
+import { deleteComment, updateComment } from "../../../store/actions/comment";
 import TinyMCEEditor from "../../UI/Input/TinyMCEEditor";
 import { ReactComponent as ExclamationIcon } from "../../../assets/images/icons/exclamation.svg";
-import { deleteComment, updateComment } from "../../../store/actions/comment";
-import { fetchTaskDetail } from "../../../store/actions/task";
 
 const CommentItem = ({ taskId, comment }) => {
   const { avatar, commentContent: contentComment, id, name } = comment;
   const dispatch = useDispatch();
+  const commentError = useSelector((state) => state.comment.error);
   const [showEditCommentInput, setShowEditCommentInput] = useState(false);
   const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false);
 
@@ -20,6 +23,26 @@ const CommentItem = ({ taskId, comment }) => {
       contentComment,
     },
   });
+
+  useEffect(() => {
+    if (commentError === "403 Forbidden !") {
+      Modal.warning({
+        title: "Opps! Something went wrong",
+        content: "You are not authorized",
+        okText: "OK",
+        okButtonProps: {
+          className:
+            "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
+        },
+        zIndex: 1050,
+        style: { top: 80 },
+        maskClosable: true,
+        afterClose: () => {
+          dispatch(createAction(actionType.SET_COMMENT_ERROR, null));
+        },
+      });
+    }
+  }, [commentError, dispatch]);
 
   const actions = [
     <Button
@@ -126,6 +149,7 @@ const CommentItem = ({ taskId, comment }) => {
         footer={null}
         closable={false}
         width={400}
+        style={{ top: 80 }}
       >
         <Typography.Title level={4}>
           <div className="flex items-center">

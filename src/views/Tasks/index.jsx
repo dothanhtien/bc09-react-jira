@@ -4,6 +4,7 @@ import {
   Breadcrumb,
   Button,
   Col,
+  Modal,
   Row,
   Select,
   Tooltip,
@@ -14,7 +15,6 @@ import { Link } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
-import Swal from "sweetalert2";
 import { createAction } from "../../store/actions";
 import { actionType } from "../../store/actions/type";
 import { fetchProjectDetail } from "../../store/actions/project";
@@ -81,15 +81,22 @@ const Tasks = (props) => {
     }
 
     if (taskError === "User is unthorization!") {
-      Swal.fire({
-        icon: "error",
+      Modal.warning({
         title: taskError,
-        customClass: {
-          confirmButton:
-            "flex justify-center items-center h-8 leading-none bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 focus:outline-none text-white hover:text-white font-medium py-1.5 px-3 rounded cursor-pointer",
+        content: "You are not the owner of this project",
+        okText: "OK",
+        okButtonProps: {
+          className:
+            "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
         },
-        buttonsStyling: false,
-      }).then(() => formik.resetForm());
+        zIndex: 1050,
+        style: { top: 80 },
+        maskClosable: true,
+        afterClose: () => {
+          dispatch(createAction(actionType.SET_TASK_ERROR, null));
+          formik.resetForm();
+        },
+      });
     }
     // eslint-disable-next-line
   }, [taskError]);
