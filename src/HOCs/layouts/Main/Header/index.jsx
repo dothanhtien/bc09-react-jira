@@ -69,7 +69,7 @@ const Header = () => {
         }
       >
         <Menu.Item
-          key="profile"
+          key="projects"
           className={`${classes["menu-item"]} h-10 py-2 px-5`}
         >
           <Link to="/projects">Projects</Link>
@@ -91,7 +91,7 @@ const Header = () => {
           key="profile"
           className={`${classes["menu-item"]} h-10 py-2 px-5`}
         >
-          <Link to="/projects">Profiles</Link>
+          <Link to="/my-profile">Profiles</Link>
         </Menu.Item>
       </Menu.ItemGroup>
 
