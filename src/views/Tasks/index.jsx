@@ -29,10 +29,13 @@ import EditTaskModal from "../../components/Tasks/EditTaskModal";
 import AddMembersModal from "../../components/Projects/AddMembersModal";
 import { ReactComponent as NewTaskIcon } from "../../assets/images/icons/new_task.svg";
 import { ReactComponent as BugIcon } from "../../assets/images/icons/bug.svg";
+import PageNotFound from "../PageNotFound";
 
 const Tasks = (props) => {
+  const { projectId } = props.match.params;
   const dispatch = useDispatch();
   const projectDetail = useSelector((state) => state.project.projectDetail);
+  const projectError = useSelector((state) => state.project.error);
   const taskTypes = useSelector((state) => state.task.taskTypes);
   const taskError = useSelector((state) => state.task.error);
   const [clonedProjectDetail, setClonedProjectDetail] = useState(null);
@@ -41,7 +44,6 @@ const Tasks = (props) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [showAddMembersModal, setShowAddMembersModal] = useState(false);
   const newTaskRef = useRef(null);
-  const { projectId } = props.match.params;
 
   const formik = useFormik({
     initialValues: {
@@ -200,6 +202,11 @@ const Tasks = (props) => {
   const handleFetchProject = () => {
     dispatch(fetchProjectDetail(projectId));
   };
+
+  // check if the project no longers exist
+  if (projectError && projectError === "Project is not found") {
+    return <PageNotFound />;
+  }
 
   return (
     <>

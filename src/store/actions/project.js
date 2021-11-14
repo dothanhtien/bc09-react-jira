@@ -106,6 +106,7 @@ export const deleteProject = (projectId, callback) => {
 
 export const fetchProjectDetail = (projectId, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_PROJECT_ERROR, null));
     try {
       const res = await projectService.fetchProjectDetail(projectId);
 
@@ -116,6 +117,12 @@ export const fetchProjectDetail = (projectId, callback) => {
       }
     } catch (err) {
       console.log(err);
+
+      if (err.response.data.statusCode === 404) {
+        dispatch(
+          createAction(actionType.SET_PROJECT_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
