@@ -284,7 +284,7 @@ const FormCreateTask = (props) => {
         </div>
       </div>
 
-      {/* description */}
+      {/* Description */}
       <div>
         <p className="mt-3">Description</p>
         <TinyMCEEditor
