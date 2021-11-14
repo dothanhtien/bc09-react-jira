@@ -25,6 +25,8 @@ import UserManagment from "./views/Users/UserManagement";
 
 import MyProfile from "./views/MyProfile";
 
+import PageNotFound from "./views/PageNotFound";
+
 const App = () => {
   const dispatch = useDispatch();
 
@@ -98,6 +100,12 @@ const App = () => {
           path="/my-profile"
           exact
           component={MyProfile}
+          layout={MainLayout}
+          redirectPath="/login"
+        />
+        <PrivateRoute
+          path="*"
+          component={PageNotFound}
           layout={MainLayout}
           redirectPath="/login"
         />
