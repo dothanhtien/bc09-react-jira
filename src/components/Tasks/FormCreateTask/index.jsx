@@ -199,7 +199,7 @@ const FormCreateTask = (props) => {
         </div>
       </div>
 
-      {/* members */}
+      {/* Members */}
       <div className="w-full mt-3">
         <p>Assigners</p>
         <Select
@@ -262,7 +262,7 @@ const FormCreateTask = (props) => {
             />
           </div>
         </div>
-        
+
         {/*  Slider bar area*/}
         <div className="w-full">
           <Slider
