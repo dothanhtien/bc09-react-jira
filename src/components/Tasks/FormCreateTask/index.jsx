@@ -262,7 +262,8 @@ const FormCreateTask = (props) => {
             />
           </div>
         </div>
-        {/*  slider bar area*/}
+        
+        {/*  Slider bar area*/}
         <div className="w-full">
           <Slider
             value={sliderMode ? timeTracking.timeTrackingSpent : 0}
