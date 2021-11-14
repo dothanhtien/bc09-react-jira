@@ -1,24 +1,26 @@
 import React, { useEffect } from "react";
 import { Breadcrumb, Button, Form, Input, Select, Typography } from "antd";
+import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import TinyMCEEditor from "../../../components/UI/Input/TinyMCEEditor";
 import {
   fetchAllProjectCategories,
+  fetchProjectDetail,
   updateProject,
 } from "../../../store/actions/project";
 import { createProjectSchema } from "../../../services/project";
+import PageNotFound from "../../PageNotFound";
 
 const EditProject = (props) => {
+  const projectId = props.match.params.id;
   const dispatch = useDispatch();
-
-  const projectInfo = useSelector((state) => state.project.projectEditInfo);
-
+  const projectDetail = useSelector((state) => state.project.projectDetail);
   const projectCategories = useSelector(
     (state) => state.project.projectCategories
   );
-  const serverError = useSelector((state) => state.project.error);
+  const projectError = useSelector((state) => state.project.error);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -31,33 +33,21 @@ const EditProject = (props) => {
     },
     validationSchema: createProjectSchema,
     validateOnMount: true,
-    initialErrors: {
-      projectName: "",
-      description: "",
-      id: 0,
-      creator: 0,
-      categoryId: "",
-    },
   });
 
   useEffect(() => {
     dispatch(fetchAllProjectCategories);
-  }, [dispatch]);
+    dispatch(fetchProjectDetail(projectId));
+  }, [dispatch, projectId]);
 
   useEffect(() => {
-    formik.setValues(projectInfo);
+    formik.setValues({
+      ...projectDetail,
+      creator: projectDetail?.creator.id,
+      categoryId: projectDetail?.projectCategory.id,
+    });
     // eslint-disable-next-line
-  }, [dispatch, projectInfo]);
-
-  useEffect(() => {
-    if (serverError === "Project name already exists") {
-      formik.setErrors({
-        projectName: serverError,
-        ...formik.errors,
-      });
-    }
-    // eslint-disable-next-line
-  }, [serverError]);
+  }, [projectDetail]);
 
   const handleUpdateProject = () => {
     formik.setTouched({
@@ -65,41 +55,60 @@ const EditProject = (props) => {
       categoryId: true,
     });
 
+    if (!formik.dirty) return;
+
     if (!formik.isValid) return;
 
     dispatch(
       updateProject(formik.values, () => {
-        props.history.push("/projects");
+        dispatch(fetchProjectDetail(projectId));
+        Swal.fire({
+          title: "Project updated successfully",
+          icon: "success",
+          showConfirmButton: false,
+        });
       })
     );
   };
 
+  // check if the project no longers exist
+  if (projectError && projectError === "Project is not found") {
+    return <PageNotFound />;
+  }
+
   return (
     <div style={{ maxWidth: 980 }} className="mx-auto">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link to={`/projects/${projectId}/board`}>
+            {projectDetail?.projectName}
+          </Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>Project settings</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Typography.Title level={3}>Update project</Typography.Title>
+      <div className="mb-4">
+        <Typography.Title level={3}>Update project</Typography.Title>
+      </div>
 
       <Form layout="vertical" onFinish={handleUpdateProject}>
         <Form.Item
           label={
-            <>
+            <Typography.Text strong>
               Project ID <span className="text-red-700">*</span>
-            </>
+            </Typography.Text>
           }
         >
-          <Input disabled value={formik.values.id} />
+          <Input disabled value={formik.values?.id} />
         </Form.Item>
         <Form.Item
           label={
-            <>
+            <Typography.Text strong>
               Project name <span className="text-red-700">*</span>
-            </>
+            </Typography.Text>
           }
           help={formik.touched.projectName && formik.errors.projectName}
           validateStatus={
@@ -110,14 +119,18 @@ const EditProject = (props) => {
         >
           <Input
             name="projectName"
-            value={formik.values.projectName}
+            value={formik.values?.projectName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
         </Form.Item>
 
         <Form.Item
-          label={<>Project category</>}
+          label={
+            <Typography.Text strong>
+              Project category <span className="text-red-700">*</span>
+            </Typography.Text>
+          }
           help={formik.touched.categoryId && formik.errors.categoryId}
           validateStatus={
             formik.touched.categoryId && !!formik.errors.categoryId
@@ -129,13 +142,12 @@ const EditProject = (props) => {
             className="w-full"
             placeholder="Select a project category"
             name="categoryId"
-            defaultValue={formik.values.categoryId}
-            value={formik.values.categoryId}
+            value={formik.values?.categoryId}
             onChange={(value) => formik.setFieldValue("categoryId", value)}
           >
-            {projectCategories.map(({ id, projectCategoryName }, i) => {
+            {projectCategories.map(({ id, projectCategoryName }) => {
               return (
-                <Select.Option key={i} value={id}>
+                <Select.Option key={id} value={id}>
                   {projectCategoryName}
                 </Select.Option>
               );
@@ -143,10 +155,13 @@ const EditProject = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Description" style={{ minHeight: 230 }}>
+        <Form.Item
+          label={<Typography.Text strong>Description</Typography.Text>}
+          style={{ minHeight: 230 }}
+        >
           <TinyMCEEditor
             name="description"
-            value={formik.values.description}
+            value={formik.values?.description}
             onEditorChange={(value) =>
               formik.setFieldValue("description", value)
             }
