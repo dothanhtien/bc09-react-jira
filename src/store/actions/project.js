@@ -64,6 +64,7 @@ export const fetchUsersByProject = (projectId) => {
 
 export const assignUserToProject = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_PROJECT_ERROR, null));
     try {
       await projectService.assignUserToProject(data);
 
@@ -72,12 +73,18 @@ export const assignUserToProject = (data, callback) => {
       }
     } catch (err) {
       console.log(err);
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_PROJECT_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
 
 export const removeUserFromProject = (data, callback) => {
   return async (dispatch) => {
+    dispatch(createAction(actionType.SET_PROJECT_ERROR, null));
     try {
       await projectService.removeUserFromProject(data);
 
@@ -86,6 +93,11 @@ export const removeUserFromProject = (data, callback) => {
       }
     } catch (err) {
       console.log(err);
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_PROJECT_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
@@ -135,7 +147,7 @@ export const updateProject = (data, callback) => {
       if (callback) {
         callback();
       }
-      
+
       // notifitying("success", "Project successfully updated");
     } catch (err) {
       console.log(err);
