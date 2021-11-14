@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Slider } from "antd";
+import { Input, Select, Slider } from "antd";
 import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
@@ -13,7 +13,6 @@ import { getStatus } from "../../../store/actions/status";
 import { createTaskForm, fetchAllTaskTypes } from "../../../store/actions/task";
 import { createTaskSchema } from "../../../services/task";
 import { ACCESS_TOKEN } from "../../../utils/constants/config";
-import "./index.css";
 
 const FormCreateTask = (props) => {
   let history = useHistory();
@@ -93,12 +92,12 @@ const FormCreateTask = (props) => {
       <div className="w-full ">
         {/* tên project */}
         <p>Project </p>
-        <select
-          className="select"
+        <Select
           name="projectId"
           value={formik.values.projectId}
-          onChange={(e) => {
-            let { value } = e.target;
+          size="large"
+          style={{ width: "100%" }}
+          onChange={(value) => {
             dispatch(getMembersByProjectId(value));
             formik.setFieldValue("projectId", value);
             formik.setFieldValue("listUserAsign", []);
@@ -111,7 +110,7 @@ const FormCreateTask = (props) => {
               </option>
             );
           })}
-        </select>
+        </Select>
         <span className="italic font-medium text-sm mt-2 ">
           * You can only create tasks of your own projects!
         </span>
@@ -120,8 +119,8 @@ const FormCreateTask = (props) => {
       {/* tên task */}
       <div className="mt-3">
         <p>Task name</p>
-        <input
-          className="select"
+        <Input
+          placeholder="Task name"
           name="taskName"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -135,12 +134,14 @@ const FormCreateTask = (props) => {
       {/* status */}
       <div className="w-full mt-3">
         <p>Status </p>
-        <select
-          className="select"
-          value={formik.values.statusId}
+        <Select
           name="statusId"
-          onChange={formik.handleChange}
+          value={formik.values.statusId}
+          size="large"
           style={{ width: "100%" }}
+          onChange={(value) => {
+            formik.setFieldValue("statusId", value);
+          }}
         >
           {statusTypes?.map((item, i) => {
             return (
@@ -149,18 +150,21 @@ const FormCreateTask = (props) => {
               </option>
             );
           })}
-        </select>
+        </Select>
       </div>
 
       <div className="w-full flex justify-between ">
         {/* priority */}
         <div className="w-5/12 mt-3 ">
           <p>Priority </p>
-          <select
-            className="select"
+          <Select
             name="priorityId"
             value={formik.values.priorityId}
-            onChange={formik.handleChange}
+            onChange={(value) => {
+              formik.setFieldValue("priorityId", value);
+            }}
+            size="large"
+            style={{ width: "100%" }}
           >
             {priority?.map((item, i) => {
               return (
@@ -169,15 +173,20 @@ const FormCreateTask = (props) => {
                 </option>
               );
             })}
-          </select>
+          </Select>
         </div>
+
+        {/* Task type */}
         <div className="w-5/12 mt-3">
           <p>Task Type</p>
-          <select
-            className="select"
+          <Select
             name="typeId"
-            onChange={formik.handleChange}
+            onChange={(value) => {
+              formik.setFieldValue("typeId", value);
+            }}
             value={formik.values.typeId}
+            size="large"
+            style={{ width: "100%" }}
           >
             {taskTypes?.map((item, i) => {
               return (
@@ -186,7 +195,7 @@ const FormCreateTask = (props) => {
                 </option>
               );
             })}
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -218,10 +227,9 @@ const FormCreateTask = (props) => {
         <div className="w-full flex justify-between ">
           <div className="w-5/12 mt-3 ">
             <p>Total Estimated Hours </p>
-            <input
+            <Input
               name="originalEstimate"
               type="number"
-              className="select"
               min="0"
               value={formik.values.originalEstimate}
               onChange={(e) => {
@@ -236,9 +244,8 @@ const FormCreateTask = (props) => {
           </div>
           <div className="w-5/12 mt-3 ">
             <p>Hours spent </p>
-            <input
+            <Input
               name="timeTrackingSpent"
-              className="select input"
               type="number"
               value={formik.values.timeTrackingSpent}
               min="0"
