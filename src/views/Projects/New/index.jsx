@@ -18,11 +18,12 @@ const NewProject = (props) => {
   const projectCategories = useSelector(
     (state) => state.project.projectCategories
   );
-  const serverError = useSelector((state) => state.project.error);
+  const projectError = useSelector((state) => state.project.error);
   const projectDetail = useSelector((state) => state.project.projectDetail);
   const [showAddMembersModal, setShowAddMembersModal] = useState(false);
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       projectName: "",
       description: "",
@@ -30,13 +31,6 @@ const NewProject = (props) => {
     },
     validationSchema: createProjectSchema,
     validateOnMount: true,
-    // sau khi dung formik.resetForm(), tao project lan nua ma khong nhap gi thi formik.isValid van la true
-    // dung initialErrors de xu ly van de nay
-    initialErrors: {
-      projectName: "",
-      description: "",
-      categoryId: "",
-    },
   });
 
   useEffect(() => {
@@ -44,20 +38,22 @@ const NewProject = (props) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (serverError === "Project name already exists") {
+    if (projectError === "Project name already exists") {
       formik.setErrors({
-        projectName: serverError,
+        projectName: projectError,
         ...formik.errors,
       });
     }
     // eslint-disable-next-line
-  }, [serverError]);
+  }, [projectError]);
 
   const handleSubmit = () => {
     formik.setTouched({
       projectName: true,
       categoryId: true,
     });
+
+    if (!formik.dirty) return;
 
     if (!formik.isValid) return;
 
@@ -76,21 +72,23 @@ const NewProject = (props) => {
 
   return (
     <div style={{ maxWidth: 980 }} className="mx-auto">
-      <Breadcrumb>
+      <Breadcrumb className="mb-4">
         <Breadcrumb.Item>
           <Link to="/projects">Projects</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>New project</Breadcrumb.Item>
       </Breadcrumb>
 
-      <Typography.Title level={3}>New project</Typography.Title>
+      <div className="mb-4">
+        <Typography.Title level={3}>New project</Typography.Title>
+      </div>
 
       <Form layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           label={
-            <>
+            <Typography.Text strong>
               Project name <span className="text-red-700">*</span>
-            </>
+            </Typography.Text>
           }
           help={formik.touched.projectName && formik.errors.projectName}
           validateStatus={
@@ -109,9 +107,9 @@ const NewProject = (props) => {
 
         <Form.Item
           label={
-            <>
+            <Typography.Text strong>
               Project category <span className="text-red-700">*</span>
-            </>
+            </Typography.Text>
           }
           help={formik.touched.categoryId && formik.errors.categoryId}
           validateStatus={
@@ -138,7 +136,10 @@ const NewProject = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item label="Description" style={{ minHeight: 230 }}>
+        <Form.Item
+          label={<Typography.Text strong>Descriptions</Typography.Text>}
+          style={{ minHeight: 230 }}
+        >
           <TinyMCEEditor
             name="description"
             value={formik.values.description}
@@ -160,7 +161,7 @@ const NewProject = (props) => {
             htmlType="submit"
             className="flex justify-center items-center h-8 bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 text-white hover:text-white focus:text-white font-medium py-1.5 px-3 rounded border-0"
           >
-            Create project
+            Create
           </Button>
         </div>
       </Form>

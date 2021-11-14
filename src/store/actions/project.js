@@ -127,18 +127,19 @@ export const fetchProjectDetail = (projectId, callback) => {
   };
 };
 
-export const updateProject = (data, callBack)=>{
-  return async(dispatch)=>{
-    try{
-      const res = await projectService.updateProject(data)
-      console.log(res.data);
+export const updateProject = (data, callback) => {
+  return async () => {
+    try {
+      await projectService.updateProject(data);
 
-      callBack()
-      notifitying('success', 'Project successfully updated')
-    }catch(err){
-      console.log({...err});
-      notifitying('warning', 'User failed to be deleted')
-
+      if (callback) {
+        callback();
+      }
+      
+      // notifitying("success", "Project successfully updated");
+    } catch (err) {
+      console.log(err);
+      notifitying("warning", "Project failed to be updated");
     }
-  }
-}
+  };
+};
