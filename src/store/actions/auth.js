@@ -8,7 +8,7 @@ export const logIn = (values, callback) => {
   return async (dispatch) => {
     try {
       const res = await authService.logIn(values);
-      swal("To team Jira 6!", "API successfully called!", "success");
+      swal("Welcome to Jira!", "Logged in successfully!", "success");
 
       dispatch(createAction(actionType.SET_ME, res.data.content));
 
@@ -48,6 +48,13 @@ export const fetchMe = async (dispatch) => {
     const loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
 
     const me = res.data.content.find((user) => user.userId === loginInfo.id);
+
+    if (me === undefined) {
+      localStorage.removeItem(ACCESS_TOKEN);
+      localStorage.removeItem("loginInfo");
+      window.location.reload();
+      return;
+    }
 
     dispatch(createAction(actionType.SET_ME, { ...me, id: me.userId }));
   } catch (err) {
