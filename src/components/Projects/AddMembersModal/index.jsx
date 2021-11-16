@@ -13,6 +13,8 @@ import {
 import { SearchOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { createAction } from "../../../store/actions";
+import { actionType } from "../../../store/actions/type";
 import {
   assignUserToProject,
   fetchUsersByProject,
@@ -25,6 +27,7 @@ const AddMembersModal = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const projectMembers = useSelector((state) => state.project.projectMembers);
+  const projectError = useSelector((state) => state.project.error);
   const userList = useSelector((state) => state.user.userList);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const usersRef = useRef(null);
@@ -55,6 +58,26 @@ const AddMembersModal = (props) => {
       handleSearchUsers();
     }
   }, [projectMembers, userList]);
+
+  useEffect(() => {
+    if (projectError === "User is unthorization!") {
+      Modal.warning({
+        title: projectError,
+        content: "You are not the owner of this project",
+        okText: "OK",
+        okButtonProps: {
+          className:
+            "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
+        },
+        zIndex: 1050,
+        style: { top: 80 },
+        maskClosable: true,
+        afterClose: () => {
+          dispatch(createAction(actionType.SET_PROJECT_ERROR, null));
+        },
+      });
+    }
+  }, [projectError, dispatch]);
 
   const addMemberToProject = (userId) => () => {
     const data = { projectId: props.project.id, userId };
@@ -154,10 +177,10 @@ const AddMembersModal = (props) => {
         <Col span={24}>
           <Form>
             <Form.Item
-              label="Search users"
+              label={<Typography.Text strong>Search users</Typography.Text>}
               colon={false}
               className="pl-6 pr-6"
-              labelCol={{ span: 4 }}
+              labelCol={{ span: 6 }}
               labelAlign="left"
             >
               <Input
@@ -170,11 +193,12 @@ const AddMembersModal = (props) => {
             </Form.Item>
           </Form>
         </Col>
-        <Col span={12}>
+        <Col xs={{ span: 24 }} sm={{ span: 12 }}>
           <Typography.Title level={5} className="pl-6">
             Not yet added
           </Typography.Title>
           <List
+            className="mb-6"
             style={{
               height: 350,
               overflow: "auto",
@@ -203,11 +227,12 @@ const AddMembersModal = (props) => {
             )}
           />
         </Col>
-        <Col span={12}>
+        <Col xs={{ span: 24 }} sm={{ span: 12 }}>
           <Typography.Title level={5} className="pl-6">
             Already in project
           </Typography.Title>
           <List
+            className="mb-6"
             style={{
               height: 350,
               overflow: "auto",

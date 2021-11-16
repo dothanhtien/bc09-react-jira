@@ -91,7 +91,8 @@ export const fetchTaskDetail = (taskId, callback) => {
 };
 
 export const updateTask = (data, callback) => {
-  return async () => {
+  return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
       await taskService.updateTask(data);
 
@@ -100,6 +101,11 @@ export const updateTask = (data, callback) => {
       }
     } catch (err) {
       console.log(err);
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };
@@ -225,7 +231,8 @@ export const updateTimeTracking = (data, callback) => {
 };
 
 export const removeTask = (params, callback) => {
-  return async () => {
+  return async (dispatch) => {
+    dispatch(createAction(actionType.SET_TASK_ERROR, null));
     try {
       await taskService.removeTask(params);
 
@@ -234,6 +241,11 @@ export const removeTask = (params, callback) => {
       }
     } catch (err) {
       console.log(err);
+      if (err.response.data.statusCode === 403) {
+        dispatch(
+          createAction(actionType.SET_TASK_ERROR, err.response.data.content)
+        );
+      }
     }
   };
 };

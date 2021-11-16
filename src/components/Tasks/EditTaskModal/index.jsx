@@ -242,8 +242,6 @@ const EditTaskModal = (props) => {
   };
 
   const handleChangeAssignees = (value) => {
-    formik.setFieldValue("listUserAsign", value);
-
     const data = {
       ...formik.values,
       listUserAsign: value,
