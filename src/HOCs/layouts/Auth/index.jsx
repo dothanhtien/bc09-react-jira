@@ -1,47 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { Layout } from "antd";
+import React from "react";
+import { Col, Row } from "antd";
 import { ReactComponent as LoginPic } from "../../../assets/images/login/panel.svg";
 
-const { Sider, Content } = Layout;
-
 const AuthLayout = (props) => {
-  const [{ width, height }, setSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
-
-  useEffect(() => {
-    window.onresize = () => {
-      setSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-  }, []);
-
   return (
-    <Layout>
-      <Sider
-        width={width / 2}
-        style={{
-          height,
-          backgroundSize: "100%",
-          repeat: "noRepeat",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <LoginPic
-          style={{
-            height,
-            width: `${Math.round(width / 3)}`,
-          }}
-        />
-      </Sider>
-
-      <Content style={{
-            height,
-            width: `${Math.round(width / 3)}`,
-          }} >{props.children}</Content>
-    </Layout>
+    <>
+      <Row>
+        <Col xs={0} md={12} lg={14} style={{ backgroundColor: "#001529" }}>
+          <LoginPic className="mx-auto w-8/12 h-full" />
+        </Col>
+        <Col xs={24} md={12} lg={10}>
+          {props.children}
+        </Col>
+      </Row>
+    </>
   );
 };
 

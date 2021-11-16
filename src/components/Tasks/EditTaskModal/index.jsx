@@ -396,8 +396,9 @@ const EditTaskModal = (props) => {
 
         <Row gutter={32}>
           <Col
-            span={14}
-            className="overflow-x-hidden overscroll-y-auto"
+            xs={24}
+            md={14}
+            className="overflow-x-hidden overscroll-y-auto mb-4 md:mb-0"
             style={{ maxHeight: "60vh" }}
           >
             <div className="task-name-container relative">
@@ -518,7 +519,7 @@ const EditTaskModal = (props) => {
             </div>
           </Col>
 
-          <Col span={10}>
+          <Col xs={24} md={10}>
             <Form>
               <Form.Item className="mb-2 w-min">
                 <Select
@@ -665,7 +666,7 @@ const EditTaskModal = (props) => {
                       onClick={handleClickEstimateValue}
                     >
                       <Typography.Text className="bg-gray-300 px-1 rounded">
-                        {formik.values.originalEstimate}
+                        {formik.values.originalEstimate}m
                       </Typography.Text>
                     </div>
                     <Input
