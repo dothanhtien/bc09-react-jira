@@ -1,10 +1,27 @@
 # Bootcamp09 - Final Project - ReactJS - Spira Clone
+
+## Task assignment
+### [Trang Le](https://github.com/LadyCodes)
+- Log in page
+- Sign up page
+- Manage user page
+- Create task modal
+- Edit project page
+
+### [Tien Do](https://github.com/dothanhtien)
+- Manage project page
+- New project page
+- Manage task page
+- Edit task modal
+- Edit user modal
+- My profile page
+
 ## Installed Packages
 - UI: antd, tailwindcss
 - Routing: react-router-dom
 - Store: redux, react-redux, redux-thunk
 - Form: formik, yup
-- Others: react-beautiful-dnd, sweetalert2, html-react-parser
+- Others: react-beautiful-dnd (Drag and Drop), sweetalert2 (Alert), @tinymce/tinymce-react (Editor), html-react-parser (Parse HTML), react-responsive (Responsive)
 
 ## Folder Structure
 ```
@@ -15,7 +32,7 @@
 |___components
 |   |___ComponentA
 |   |   |___index.jsx
-|   |   |___style.module.css
+|   |   |___[name].module.css
 |   |___...
 |___HOCs
 |   |___layouts
