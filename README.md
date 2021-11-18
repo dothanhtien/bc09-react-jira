@@ -1,4 +1,4 @@
-# Bootcamp09 - Final Project - ReactJS - Spira Clone
+# Bootcamp09 - Jira Clone Project
 
 ## Task assignment
 ### [Trang Le](https://github.com/LadyCodes)
