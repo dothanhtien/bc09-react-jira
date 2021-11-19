@@ -7,6 +7,7 @@ import {
   Input,
   List,
   Menu,
+  Modal,
   Row,
   Table,
   Tooltip,
@@ -56,24 +57,22 @@ const Projects = (props) => {
 
   const showConfirmDeleteProjectModal = ({ projectName, id: projectId }) => {
     return () => {
-      Swal.fire({
+      Modal.confirm({
         title: `Are you sure to delete\n${projectName}?`,
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonText: "Delete",
-        allowOutsideClick: false,
-        focusCancel: true,
-        buttonsStyling: false,
-        customClass: {
-          confirmButton:
-            "flex justify-center items-center h-8 leading-none mr-2 bg-red-600 hover:bg-red-500 focus:bg-red-500 text-white hover:text-white focus:text-white font-base py-1.5 px-3 rounded border-0",
-          cancelButton:
-            "flex justify-center items-center h-8 leading-none mr-2 bg-gray-300 hover:bg-gray-400 focus:bg-gray-300 text-gray-700 hover:text-gray-700 focus:text-gray-700 font-base py-1.5 px-3 rounded border-0",
+        okText: "Delete",
+        okButtonProps: {
+          className:
+            "bg-red-600 hover:bg-red-500 focus:bg-red-500 text-white font-semibold hover:text-white focus:text-white border-red-600 hover:border-red-500 focus:border-red-500 rounded",
         },
-      }).then((result) => {
-        if (result.isConfirmed) {
+        cancelButtonProps: {
+          className:
+            "bg-blue-700 hover:bg-blue-600 focus:bg-blue-700 text-white font-semibold hover:text-white focus:text-white border-blue-700 hover:border-blue-600 focus:border-blue-700 rounded",
+        },
+        zIndex: 1050,
+        centered: true,
+        onOk: () => {
           handleDeleteProject(projectId);
-        }
+        },
       });
     };
   };
@@ -91,11 +90,7 @@ const Projects = (props) => {
     Swal.fire({
       title: "Project deleted successfully",
       icon: "success",
-      customClass: {
-        confirmButton:
-          "flex justify-center items-center h-8 leading-none bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 focus:outline-none text-white hover:text-white font-medium py-1.5 px-3 rounded cursor-pointer",
-      },
-      buttonsStyling: false,
+      showConfirmButton: false,
     });
   };
 
@@ -282,7 +277,7 @@ const Projects = (props) => {
                   <Button
                     className="bg-transparent hover:bg-transparent focus:bg-transparent text-red-600 hover:text-red-500 focus:text-red-500 border-0 shadow-none"
                     icon={<DeleteOutlined />}
-                    onClick={showConfirmDeleteProjectModal(item.id)}
+                    onClick={showConfirmDeleteProjectModal(item)}
                   />
                 </Col>
               </Row>
